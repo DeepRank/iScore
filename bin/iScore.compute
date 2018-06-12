@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+from iScore.score_graph import ScoreGraph
+import argparse
+
+# parse arguments
+parser = argparse.ArgumentParser(description=' iScore - score graphs')
+
+# test and train IDS
+parser.add_argument('--testID', type=str, default='testID.lst',help='list of ID for testing. Default: testID.lst')
+parser.add_argument('--trainID', type=str, default='trainID.lst',help='list of ID for training. Default: trainID.lst')
+
+# graphs of the individual complex
+parser.add_argument('--graph',type=str,default='graph',help='folder containing the graph of each complex. Default: graphMAT')
+
+# file containing the kernel for checking
+parser.add_argument('--check',type=str,default=None,help='file containing the kernel. Default: kernelMAT/<testID_name>.mat')
+
+# where to write the output file
+parser.add_argument('--outfile',type=str,default='kernel.pkl',help='Output file containing the calculated Kernel values. Default: kernel.pkl')
+
+# what to do:  tune the kernel, test the calculation, run the entire calculations
+parser.add_argument('--tune_kernel',action='store_true',help='Only tune the CUDA kernel')
+parser.add_argument('--test',action='store_true',help='Only test the functions on a single pair pair of graph ')
+
+# parameter of the calculations
+parser.add_argument('--lamb',type=float,default=1,help='Lambda parameter in the Kernel calculations. Default: 1')
+parser.add_argument('--walk',type=int,default=4,help='Max walk length in the Kernel calculations. Default: 4')
+parser.add_argument('--method',type=str,default='vect',help="Method used in the calculation: 'vect'(default), 'combvec', 'iter'")
+
+# cuda parameters
+parser.add_argument('--func',type=str,default='all',help='functions to tune in the kernel. Defaut: all functions')
+parser.add_argument('--cuda',action='store_true', help='Use CUDA kernel')
+parser.add_argument('--gpu_block',nargs='+',default=[8,8,1],type=int,help='number of gpu block to use. Default: 8 8 1')
+
+args = parser.parse_args()
+
+# init and load the data
+GR = ScoreGraph(testIDs=args.testID,trainIDs=args.trainID,graph_path=args.graph,gpu_block=tuple(args.gpu_block),method=args.method)
+GR.import_from_mat()
+
+# get the path of the check file
+checkfile = GR.get_check_file(args.check)
+
+# only tune the kernel
+if args.tune_kernel:
+	GR.tune_kernel(func=args.func,test_all_func=args.func=='all')
+
+# run the entire calculation
+else :
+	GR.run(lamb=args.lamb,
+		   walk=args.walk,
+		   outfile=args.outfile,
+		   cuda=args.cuda,
+		   gpu_block=tuple(args.gpu_block),
+		   check=checkfile,
+		   test=args.test)
