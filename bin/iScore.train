@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+import os
+import subprocess
+import argparse
+
+# parse arguments
+parser = argparse.ArgumentParser(description=' iScore - Train a model')
+
+# where the kernels are stored
+parser.add_argument('--kernel',default='./kernel/',type=str,help='Kernel pickle file to use')
+
+# where the graphs are stored
+parser.add_argument('--graph',default='./graph/',type=str,help='Graph pickle file to use')
+
+# get the args
+args = parser.parse_args()
+
+
+# create the graphs
+if not os.path.isdir(args.graph):
+	os.mkdir(args.graph)
+	cmd = subprocess.Popen('iScore.graph',shell=True)
+
+# compute the kernels
+if not os.path.isdir(args.kernel):
+	os.mkdir(args.kernel)
+	kfile = os.path.join(args.kernel,'kernel.pckl')
+	cmd = subprocess.Popen('iScore.kernel --outfile=%s' %kfile, shell=True)
+
+# train the model
+cmd = subprocess.Popen('iScore.svm --train --package_model', shell=True)
+

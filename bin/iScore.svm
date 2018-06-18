@@ -1,0 +1,65 @@
+#!/usr/bin/env python
+import os
+from iScore.rank import DataSet, SVM
+import argparse
+
+
+# parse arguments
+parser = argparse.ArgumentParser(description=' iScore - SVM')
+
+# test and train IDS
+parser.add_argument('--train', action='store_true', help='train a model')
+
+#case ID
+parser.add_argument('--train_class', type=str, default='caseID.lst',help='list of case ID for training. Default: caseID.lst')
+parser.add_argument('--trainID', type=str, default='trainID.lst',help='list of case ID for testing. Default: trainID.lst')
+parser.add_argument('--testID', type=str, default='testID.lst',help='list of case ID for testing. Default: testID.lst')
+
+# kernel to use
+parser.add_argument('--kernel',default='./kernel/',type=str,help='Kernel pickle file to use')
+
+# model names
+parser.add_argument('--save_model', type=str, default='svm_model.pkl',help='name of the file to savee the svm model')
+parser.add_argument('--load_model', type=str, default='svm_model.pkl',help='name of the svm model to load')
+
+# package the model
+parser.add_argument('--package_model',action='store_true',help='Write a single file containing all the info of the training set')
+parser.add_argument('--package_name',type=str,default='training_set.tar.gz',help='Name of the packaged model')
+parser.add_argument('--graph',default='./graph/',type=str,help='Graph pickle file to use')
+parser.add_argument('--include_kernel',action='store_true',help='include the kernel in the packaged model')
+
+# max walk len
+parser.add_argument('--maxlen', type=int, default=None,help='max walk length of the kernel. Default max len possible with the kernel file')
+
+
+# get the args
+args = parser.parse_args()
+
+# figure out the kernel files
+# if a dir was given all the file in that dir are considered
+if os.path.isdir(args.kernel):
+	Kfile =  [args.kernel + f for f in os.listdir(args.kernel)]
+elif os.path.isfile(args.kernel):
+	Kfile = args.kernel
+else:
+	raise ValueError('Kernel file not found')
+
+# train the model
+if args.train:
+
+	traindata = DataSet(args.train_class,Kfile,args.maxlen)
+	svm = SVM(trainDataSet=traindata)
+	svm.train(model_file_name=args.save_model)
+
+	if args.package_model:
+		print('Create Archive file : ', args.package_name)
+		svm.archive(graph_path=args.graph,
+			        kernel_path=args.kernel,
+			        include_kernel=args.include_kernel,
+			        model_name=args.package_name)
+
+else:
+	testdata = DataSet(args.trainID,Kfile,args.maxlen,testID=args.testID)
+	svm = SVM(testDataSet = testdata)
+	svm.predict(model_file_name = args.load_model)
+

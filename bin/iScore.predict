@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+import os
+import subprocess
+import argparse
+
+# parse arguments
+parser = argparse.ArgumentParser(description=' iScore - Predict the class of new conformations')
+
+# where the kernels are stored
+parser.add_argument('--kernel',default='./kernel/',type=str,help='Kernel pickle file to use')
+
+# where the graphs are stored
+parser.add_argument('--graph',default='./graph/',type=str,help='Graph pickle file to use')
+
+# archive model to use
+parser.add_argument('--archive',default='training_set.tar.gz',help='model archive we want to use')
+
+# get the args
+args = parser.parse_args()
+
+
+# create the training set
+cmd = subprocess.Popen('mkdir ./training_set/')
+cmd = subprocess.Popen('tar -xvf %s -C ./training_set/' %args.archive)
+
+# create the graphs
+if not os.path.isdir(args.graph):
+	os.mkdir(args.graph)
+	cmd = subprocess.Popen('iScore.graph',shell=True)
+
+# compute the kernels
+if not os.path.isdir(args.kernel):
+	os.mkdir(args.kernel)
+	kfile = os.path.join(args.kernel,'kernel.pckl')
+	cmd = subprocess.Popen('iScore.kernel --test_graph = ./graph --train_graph=./training_set/graph --outfile=%s' %kfile, shell=True)
+
+# train the model
+cmd = subprocess.Popen('iScore.svm ', shell=True)
+
