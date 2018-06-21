@@ -419,3 +419,69 @@ class GenGraph():
                       edges_index = edges)
 
         graph.pickle(fname)
+
+
+def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./graph/',aligned=True):
+
+    # make sure that the dir containing the PDBs exists
+    if not os.path.isdir(pdb_path):
+        raise NotADirectoryError(pdb_path + ' is not a directory')
+    else:
+        pdb_files = os.listdir(pdb_path)
+
+    # make sure that the dir containing the PSSMs exists
+    if not os.path.isdir(pssm_path):
+        raise NotADirectoryError(pssm_path + ' is not a directory')
+    else:
+        pssm_files = os.listdir(pssm_path)
+
+    # create the outdir if necessary
+    if not os.path.isdir(outdir):
+        os.mkdir(outdir)
+
+    # check if we want to select a subset of PDBs
+    if select is not None:
+        if not os.path.isfile(select):
+            raise FileNotFoundError(select + ' is not a file')
+        else:
+            with open(select,'r') as f:
+                select = f.readlines()
+    else:
+        select = None
+
+    # get the list of PDB names
+    pdbs = list(filter(lambda x: x.endswith('.pdb'),os.listdir(pdb_path)))
+    if select is not None:
+        pdbs = list(filter(lambda x: x.startswith(select),pdbs))
+
+    # create the output file
+    if not os.path.isdir(outdir):
+        os.mkdir(outdir)
+
+    # loop over all the PDBs
+    for name in pdbs:
+
+        print('Creating graph of PDB %s' %name)
+
+        # pdb name
+        pdbfile = os.path.join(pdb_path,name)
+
+        # mol name and base name
+        mol_name = os.path.splitext(name)[0]
+        base_name = mol_name.split('_')[0]
+
+        # pssms files
+        pssmA = os.path.join(pssm_path,mol_name+'.A.pdb.pssm')
+        pssmB = os.path.join(pssm_path,mol_name+'.B.pdb.pssm')
+
+        # check if the pssms exists
+        if os.path.isfile(pssmA) and os.path.isfile(pssmB):
+            pssm = {'A':pssmA,'B':pssmB}
+        else:
+            raise FileNotFoundError(pssmA + ' or ' + pssmB + ' not found')
+
+        # output file
+        graphfile = os.path.join(outdir+mol_name+'.pckl')
+
+        # create the graphs
+        gen = GenGraph(pdbfile,pssm,aligned=aligned,outname=graphfile)

@@ -8,6 +8,7 @@ import itertools
 from collections import OrderedDict
 import pickle
 import os
+import tarfile
 
 from .graph import Graph
 
@@ -22,7 +23,8 @@ except:
 class Kernel(object):
 
 	def __init__(self,testIDs='testID.lst',trainIDs='trainID.lst',
-		         test_graph='graph/',train_graph='graph/',
+		         test_graph='./graph/',train_graph='./graph/',
+		         train_archive=None,
 		         gpu_block=(8,8,1),method='vect'):
 
 		"""Compute the kernels of graph pairs.
@@ -57,6 +59,7 @@ class Kernel(object):
 		self.test_graph = test_graph
 		self.gpu_block = gpu_block
 		self.method = method
+		self.train_archive=train_archive
 
 		# the cuda kernel
 		self.kernel = os.path.dirname(os.path.abspath(__file__)) + '/cuda/cuda_kernel.c'
@@ -88,20 +91,29 @@ class Kernel(object):
 		if not os.path.isdir(self.train_graph):
 			raise NotADirectoryError('Directory %s not found' %(self.train_graph))
 
+		if self.train_archive is not None:
+			if not os.path.isfile(self.train_archive):
+				raise FileNotFoundError('file %s not found' %(self.train_archive))
+
 		# get the names of the data
 		# Warning those are not in the same order
 		# than  in the file
 		# bloody filter !!
-		train_names = self._get_file_names(self.trainIDs,self.train_graph)
-		test_names  = self._get_file_names(self.testIDs,self.test_graph)
-		print(train_names)
-		print(test_names)
-
 		self.train_graphs = OrderedDict()
-		for name in train_names:
-			self.train_graphs[name] = Graph(self.train_graph + '/' + name)
-			self.max_num_edges_train = np.max([self.max_num_edges_train,self.train_graphs[name].num_edges])
+		if self.train_archive is not None:
+			tar=tarfile.open(self.train_archive)
+			for member in tar.getmembers():
+				if member.name.startswith('./graph/'):
+					name = member.name.split('/')[-1]
+					self.train_graphs[name] = pickle.load(tar.extractfile(member))
 
+		else:
+			train_names = self._get_file_names(self.trainIDs,self.train_graph)
+			for name in train_names:
+				self.train_graphs[name] = Graph(self.train_graph + '/' + name)
+				self.max_num_edges_train = np.max([self.max_num_edges_train,self.train_graphs[name].num_edges])
+
+		test_names  = self._get_file_names(self.testIDs,self.test_graph)
 		self.test_graphs = OrderedDict()
 		for name in test_names:
 			self.test_graphs[name] = Graph(self.test_graph + '/' + name)
@@ -131,8 +143,6 @@ class Kernel(object):
 			# get the requred complex names
 			with open(filename) as f:
 				required_names = tuple([name.split()[0]+'.' for name in f.readlines() if name.split()])
-
-
 
 			# get the file names
 			names =  list(filter(lambda x: x.startswith(required_names),existing_names))
@@ -757,4 +767,33 @@ class Kernel(object):
 		return kernel
 
 
+def iscore_kernel(testID=None,trainID=None,
+	              test_graph='./graph', train_graph='./graph',\
+	              train_archive=None,
+	              check=None, outfile='kernel.pkl',test=False,
+	              lamb=1, walk=4, method='vect',
+	              tune_kernel=False,func='all',cuda=False, gpu_block=[8,8,1]):
 
+	# init and load the data
+	ker = Kernel(testIDs=testID,test_graph = test_graph,
+		         trainIDs=trainID,train_graph=train_graph,
+		         train_archive=train_archive,
+		         gpu_block=tuple(gpu_block),method=method)
+	ker.import_from_mat()
+
+	# get the path of the check file
+	checkfile = ker.get_check_file(check)
+
+	# only tune the kernel
+	if tune_kernel:
+		ker.tune_kernel(func=func,test_all_func=func)
+
+	# run the entire calculation
+	else :
+		ker.run(lamb=lamb,
+			   walk=walk,
+			   outfile=outfile,
+			   cuda=cuda,
+			   gpu_block=tuple(gpu_block),
+			   check=checkfile,
+			   test=test)
