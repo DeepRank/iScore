@@ -2,6 +2,9 @@
 import os
 import subprocess
 import argparse
+from iScore.graph import iscore_graph
+from iScore.kernel import iscore_kernel
+from iScore.rank import iscore_svm
 
 # parse arguments
 parser = argparse.ArgumentParser(description=' iScore - Predict the class of new conformations')
@@ -18,22 +21,19 @@ parser.add_argument('--archive',default='training_set.tar.gz',help='model archiv
 # get the args
 args = parser.parse_args()
 
-
-# create the training set
-cmd = subprocess.Popen('mkdir ./training_set/')
-cmd = subprocess.Popen('tar -xvf %s -C ./training_set/' %args.archive)
-
 # create the graphs
 if not os.path.isdir(args.graph):
 	os.mkdir(args.graph)
-	cmd = subprocess.Popen('iScore.graph',shell=True)
+	iscore_graph()
 
 # compute the kernels
 if not os.path.isdir(args.kernel):
 	os.mkdir(args.kernel)
 	kfile = os.path.join(args.kernel,'kernel.pckl')
-	cmd = subprocess.Popen('iScore.kernel --test_graph = ./graph --train_graph=./training_set/graph --outfile=%s' %kfile, shell=True)
+	iscore_kernel(test_graph='./graph/',train_archive=args.archive,outfile=kfile)
 
-# train the model
-cmd = subprocess.Popen('iScore.svm ', shell=True)
+
+# predcit the model
+iscore_svm(load_model=None,package_name=args.archive)
+
 

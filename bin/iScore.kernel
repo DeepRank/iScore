@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from iScore.kernel import Kernel
+from iScore.kernel import iscore_kernel
 import argparse
 
 # parse arguments
@@ -35,25 +35,10 @@ parser.add_argument('--gpu_block',nargs='+',default=[8,8,1],type=int,help='numbe
 
 args = parser.parse_args()
 
-# init and load the data
-ker = Kernel(testIDs=args.testID,test_graph = args.test_graph,
-	         trainIDs=args.trainID,train_graph=args.train_graph,
-	         gpu_block=tuple(args.gpu_block),method=args.method)
-ker.import_from_mat()
 
-# get the path of the check file
-checkfile = ker.get_check_file(args.check)
 
-# only tune the kernel
-if args.tune_kernel:
-	ker.tune_kernel(func=args.func,test_all_func=args.func=='all')
-
-# run the entire calculation
-else :
-	ker.run(lamb=args.lamb,
-		   walk=args.walk,
-		   outfile=args.outfile,
-		   cuda=args.cuda,
-		   gpu_block=tuple(args.gpu_block),
-		   check=checkfile,
-		   test=args.test)
+iscore_kernel(testID=args.testID,trainID=args.trainID,
+	              test_graph=args.test_graph, train_graph=args.train_graph,
+	              check=args.check, outfile=args.outfile,test=args.test,
+	              lamb=args.lamb, walk=args.walk, method=args.method,
+	              tune_kernel=args.tune_kernel,func=args.func,cuda=args.cuda, gpu_block=args.gpu_block)
