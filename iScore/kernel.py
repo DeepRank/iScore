@@ -134,7 +134,6 @@ class Kernel(object):
 		# get the file name in the graph dir
 		existing_names = os.listdir(dirname)
 
-
 		if filename is None:
 			return existing_names
 
@@ -223,9 +222,18 @@ class Kernel(object):
 		if check is not None:
 			data = spio.loadmat(check,squeeze_me=True)
 			Kcheck = data['K']
-			testID_check = data['graphIDs_test'].tolist()
-			trainID_check = data['graphIDs_train'].tolist()
 
+			testID_check = data['graphIDs_test']
+			if isinstance(testID_check,str):
+				testID_check = [testID_check]
+			else:
+				testID_check = testID_check.tolist()
+
+			trainID_check = data['graphIDs_train']
+			if isinstance(trainID_check,str):
+				trainID_check = [trainID_check]
+			else:
+				trainID_check = trainID_check.tolist()
 
 		# go through all the data
 		for i1,(name1,G1) in enumerate(self.test_graphs.items()):
@@ -260,8 +268,10 @@ class Kernel(object):
 				if check is not None:
 					ind_test = testID_check.index(n1)
 					ind_train = trainID_check.index(n2)
-					print('Kcheck :  ' + '  '.join(list(map(lambda x: '{:1.3}'.format(x),Kcheck[ind_test][ind_train]))))
-
+					if Kcheck.ndim > 1:
+						print('Kcheck :  ' + '  '.join(list(map(lambda x: '{:1.3}'.format(x),Kcheck[ind_test][ind_train]))))
+					else:
+						print('Kcheck :  ' + '  '.join(list(map(lambda x: '{:1.3}'.format(x),Kcheck))))
 				if test:
 					exit()
 
