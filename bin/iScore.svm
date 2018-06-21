@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os
-from iScore.rank import DataSet, SVM
+from iScore.rank import iscore_svm
 import argparse
 
 
@@ -35,31 +35,16 @@ parser.add_argument('--maxlen', type=int, default=None,help='max walk length of 
 # get the args
 args = parser.parse_args()
 
-# figure out the kernel files
-# if a dir was given all the file in that dir are considered
-if os.path.isdir(args.kernel):
-	Kfile =  [args.kernel + f for f in os.listdir(args.kernel)]
-elif os.path.isfile(args.kernel):
-	Kfile = args.kernel
-else:
-	raise ValueError('Kernel file not found')
 
-# train the model
-if args.train:
-
-	traindata = DataSet(args.train_class,Kfile,args.maxlen)
-	svm = SVM(trainDataSet=traindata)
-	svm.train(model_file_name=args.save_model)
-
-	if args.package_model:
-		print('Create Archive file : ', args.package_name)
-		svm.archive(graph_path=args.graph,
-			        kernel_path=args.kernel,
-			        include_kernel=args.include_kernel,
-			        model_name=args.package_name)
-
-else:
-	testdata = DataSet(args.trainID,Kfile,args.maxlen,testID=args.testID)
-	svm = SVM(testDataSet = testdata)
-	svm.predict(model_file_name = args.load_model)
-
+iscore_svm(train=args.train,
+	       train_class=args.train_class,
+	       trainID=args.trainID,
+	       testID=args.testID,
+		   kernel=args.kernel,
+		   save_model=args.save_model,
+		   load_model=args.load_model,
+		   package_model=args.package_model,
+		   package_name=ars.package_name,
+		   graph=args.graph,
+		   include_kernel=args.include_kernel,
+		   maxlen = args.maxlen)
