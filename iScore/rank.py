@@ -5,8 +5,6 @@ from iScore.graph import Graph
 import pickle
 import tarfile
 
-pathsvm = '/home/nico/programs/libsvm/python'
-sys.path.append(pathsvm)
 from svmutil import *
 
 
