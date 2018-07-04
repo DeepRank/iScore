@@ -5,7 +5,6 @@ Graph kernel approach of  conformation ranking
 ## Install
 
 You need:
-
   . libsvm  (https://www.csie.ntu.edu.tw/~cjlin/libsvm/)
   . pdb2sql (https://github.com/DeepRank/pdb2sql)
 
@@ -58,7 +57,7 @@ You can also read an existing graph with the class 'Graph'. Two `Graph` instance
 The file `iScore/example/kernel/create_kernel.py` shows how to compute the kernel of two graphs
 
 
-```python#!/usr/bin/env python
+```python
 from iScore.graph import Graph, iscore_graph
 from iScore.kernel import Kernel
 
