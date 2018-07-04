@@ -12,7 +12,6 @@ class DataSet(object):
 
 	def __init__(self,trainID,Kfile,maxlen,testID=None):
 
-		print(trainID)
 		self.train_name, self.train_class = self._get_ids(trainID)
 
 		if testID is None:
@@ -47,9 +46,11 @@ class DataSet(object):
 					classes = data[:,0].astype('int')
 					names = data[:,1]
 					return names.tolist(), classes.tolist()
+
 				else:
+					print('Warning: Ground truth classes not found in '+idlist)
 					names = data[:,0]
-					classes = [0]*nl
+					classes = [None]*nl
 					return names.tolist(), classes
 			else:
 				raise FileNotFoundError(idlist, 'is not a file')
@@ -63,8 +64,9 @@ class DataSet(object):
 				names = [id_[1] for id_ in idlist]
 				return names, classes
 			else:
+				print('Warning: Ground truth classes not found in list' )
 				names = idlist
-				classes = [0]*nl
+				classes = [None]*nl
 				return names, classes
 
 		else:
@@ -185,17 +187,75 @@ class SVM(object):
 		tar.makefile(dict_tar['svm_model.pkl'],'./_tmp_model.pkl')
 		model = svm_load_model('./_tmp_model.pkl')
 
-		# pedict the classes
-		self.testDataSet.iScore = svm_predict(self.testDataSet.test_class,self.testDataSet.Kmat,model)
+		# check if we have ground truth
+		ground_truth = self.testDataSet.test_class
+		if None in ground_truth:
+			print('Warning ground truth missing. SVM accuracy will be meaningless')
+			ground_truth = [0]*len(ground_truth)
 
-		# clean uo crew
+		# pedict the classes
+		self.testDataSet.iScore = svm_predict(ground_truth,self.testDataSet.Kmat,model)
+		print(self.testDataSet.iScore)
+
+		# clean up crew
 		os.remove('./_tmp_model.pkl')
 
+	def export_prediction(self,fname):
+
+		if fname.endswith('.pkl') or fname.endswith('.pckl'):
+			self._export_score_pickle(fname,
+									  self.testDataSet.test_name,
+									  self.testDataSet.test_class,
+									  self.testDataSet.iScore)
+
+
+		elif fname.endswith('.dat') or fname.endswith('.txt'):
+			self._export_score_text(fname,
+				                    self.testDataSet.test_name,
+				                    self.testDataSet.test_class,
+				                    self.testDataSet.iScore)
+
+		else:
+			fname = os.path.splitext(fname)[0]
+			self._export_score_pickle(fname+'.pkl',
+						  self.testDataSet.test_name,
+						  self.testDataSet.test_class,
+						  self.testDataSet.iScore)
+			self._export_score_text(fname+'.dat',
+				                    self.testDataSet.test_name,
+				                    self.testDataSet.test_class,
+				                    self.testDataSet.iScore)
+
+
+	@staticmethod
+	def _export_score_pickle(fname,name,label,score):
+		data = {}
+		for i,n in enumerate(name):
+			data[n] = {'ground_truth' : label[i],
+			           'prediction' : score[0][i],
+			           'decision_value' : score[2][i]}
+		f = open(fname,'wb')
+		pickle.dump(data,f)
+		f.close()
+
+	@staticmethod
+	def _export_score_text(fname,name,label,score):
+		f = open(fname,'w')
+		f.write('{:10} {:>5}     {:>5}     {:>14}\n'.format('Name','label','pred','decision_value'))
+		for i,n in enumerate(name):
+			if label[i] is None:
+				st = "{:10} {:>5}     {:5}     {: 14.3f}\n"
+				il = 'None'
+			else:
+				st = "{:10} {:5}     {:5d}     {: 14.3f}\n"
+				il = int(label[i])
+			f.write(st.format(n,il,int(score[0][i]),score[2][i][0]))
+		f.close()
 
 def iscore_svm(train=False,train_class='caseID.lst',trainID=None,testID=None,
 				kernel='./kernel/',save_model='svm_model.pkl',load_model=None,
 				package_model=False,package_name=None,graph='./graph/',
-				include_kernel=False, maxlen = None):
+				include_kernel=False, maxlen = None,score_file='iScorePredict'):
 
 	# figure out the kernel files
 	# if a dir was given all the file in that dir are considered
@@ -233,3 +293,4 @@ def iscore_svm(train=False,train_class='caseID.lst',trainID=None,testID=None,
 		testdata = DataSet(trainID,Kfile,maxlen,testID=testID)
 		svm = SVM(testDataSet = testdata)
 		svm.predict(package_name = package_name)
+		svm.export_prediction(score_file)

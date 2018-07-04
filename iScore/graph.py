@@ -56,7 +56,9 @@ class Graph(object):
 
     def _load_from_pickle(self,fname):
 
-        data = pickle.load(open(fname,'rb'))
+        f =open(fname,'rb')
+        data = pickle.load(f)
+        f.close()
 
         self.name = ext = os.path.splitext(fname)[0]
         self.nodes_pssm_data = data.nodes_pssm_data
@@ -80,7 +82,9 @@ class Graph(object):
         return np.all(data != None)
 
     def pickle(self,fname):
-        pickle.dump(self,open(fname,'wb'))
+        f = open(fname,'wb')
+        pickle.dump(self,f)
+        f.close()
 
     def print(self):
         print('='*40)
@@ -203,7 +207,7 @@ class Graph(object):
 
 class GenGraph():
 
-    def __init__(self,pdbfile,pssmfile,aligned=True,outname=None,cutoff=6.0):
+    def __init__(self,pdbfile,pssmfile,aligned=True,export=True,outname=None,cutoff=6.0):
 
         # pdb file
         self.pdbfile = pdbfile
@@ -242,7 +246,9 @@ class GenGraph():
             self.process_aligned_pssm()
 
         self.construct_graph()
-        self.export_graph(outname)
+
+        if export:
+            self.export_graph(outname)
 
 
     def check_pssm_format(self,aligned):

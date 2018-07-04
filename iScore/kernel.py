@@ -235,6 +235,9 @@ class Kernel(object):
 			else:
 				trainID_check = trainID_check.tolist()
 
+		# store the check
+		check_values = []
+
 		# go through all the data
 		for i1,(name1,G1) in enumerate(self.test_graphs.items()):
 			for i2,(name2,G2) in enumerate(self.train_graphs.items()):
@@ -266,17 +269,26 @@ class Kernel(object):
 
 				# print the check if present
 				if check is not None:
+
 					ind_test = testID_check.index(n1)
 					ind_train = trainID_check.index(n2)
 					if Kcheck.ndim > 1:
 						print('Kcheck :  ' + '  '.join(list(map(lambda x: '{:1.3}'.format(x),Kcheck[ind_test][ind_train]))))
+						kc = Kcheck[ind_test][ind_train]
 					else:
 						print('Kcheck :  ' + '  '.join(list(map(lambda x: '{:1.3}'.format(x),Kcheck))))
+						kc = Kcheck
+					check_values.append(np.allclose(K[(n1,n2)],kc))
+
 				if test:
 					exit()
 
 		# save the data
-		pickle.dump(K,open(outfile,'wb'))
+		f = open(outfile,'wb')
+		pickle.dump(K,f)
+		f.close()
+
+		return check_values
 
 	##############################################################
 	#
