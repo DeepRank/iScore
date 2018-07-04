@@ -6,8 +6,8 @@ Graph kernel approach of  conformation ranking
 
 You need:
 
-  . libsvm
-  . pdb2sql
+  . libsvm  (https://www.csie.ntu.edu.tw/~cjlin/libsvm/)
+  . pdb2sql (https://github.com/DeepRank/pdb2sql)
 
 The python bonding of libsvm may not add the path to the python path. Don't forget to add
 
@@ -22,30 +22,110 @@ as usual. Some executables are stored in `iScore/bin/`. Don't forget to add this
 
 ## Test
 
-To test the install go to `iScore/example/`. Two simple examples are stored in `./graph/` and './kernel/'. For example in `./graph/` type
+To test the install go to `test` and run the test suite by typing
 
-`python create_graph.py`
+`pytest`
 
-to generate the graphs of a single conformation
+## Example
 
-In './kernel/' type:
+A few examples are given in the folder iScore/example.
 
-`python create_kernel.py`
+### Computing graphs
 
-to generate the graphs and compute the kernels of two coformations.
+The file `iScore/example/graph/create_graph.py` shows how to generate the graph of a given conformation specified by the PDB and PSSM file located in the subfolder input/
 
-In `./training_example` a simple workflow can be executed. As you can notive there is a bin folder. To generate the training set simply type:
+```python
+from iScore.graph import GenGraph, Graph
 
-`iScore.train`
+pdb = './input/1ATN.pdb'
+pssm = {'A':'./input/1ATN.A.pdb.pssm','B':'./input/1ATN.B.pdb.pssm'}
 
-This will generate the graphs of the conformations of this training set. Then it will compute the kernels and finally train a SVM model. The final result is stored in a tar file calles `training_set.tar.gz` that contains all the information needed to predict values from the model. 
+g = GenGraph(pdb,pssm)
+g.construct_graph()
+g.export_graph('1ATN.pkl')
 
-To use the model go to the subfoler `./test/`. There 5 coformations are present and can be tested against the model trained above. To do that simply type:
+g = Graph('1ATN.pkl')
+gcheck = Graph('1ATN.mat')
+g.compare(gcheck)
+```
 
-`iScore.predict --archive ../training_set.tar.gz`
+To generate graph the class `GenGraph` can be used with the path of the pdb file and pssm files given as a dictionary. The method `construct_graph()` will then assemble the graph that one can export with the method `export_graph()`.
 
-This wil compute the graphs of the test set, compute the kernels with the grpahs of the trainig set and predict the classes from the trained SVM model.
+You can also read an existing graph with the class 'Graph'. Two `Graph` instance can be comapred with the metod 'compare()'.
+
+### Computing Kernels
+
+The file `iScore/example/kernel/create_kernel.py` shows how to compute the kernel of two graphs
 
 
-More Documentation to come soon
+```python#!/usr/bin/env python
+from iScore.graph import Graph, iscore_graph
+from iScore.kernel import Kernel
+
+# create all the graphs of the pdb in ./pdb/
+iscore_graph()
+
+# comapre the graphs with the ones obtained
+# with the matlab version
+g = Graph('./graph/2OZA.pckl')
+gcheck = Graph('./check/graphMAT/2OZA.mat')
+g.compare(gcheck)
+
+
+g = Graph('./graph/1IRA.pckl')
+gcheck = Graph('./check/graphMAT/1IRA.mat')
+g.compare(gcheck)
+
+
+#init and load the data
+ker = Kernel()
+ker.import_from_mat()
+
+# get the path of the check file
+checkfile = ker.get_check_file(fname='./check/kernelMAT/K.mat')
+
+# run the calculations
+ker.run(lamb=1.0,walk=4,check=checkfile)
+```
+
+Before computing the kernel the graphs of the two conformation stored in `pdb/` are calculated. This is here done with a single command `iscore_graph()`. By default this function will create the graphs of all the conformations stored in the subfolder `pdb/` with the pssm stored in the subfolder `pssm/`. We here also check that the graphs are identical to the ones stored in the `check/graphMAT/` folder.
+
+The kernel between the two graphs computed above is calculated with the class `Kernel()`. By default the method `Kernel.import_from_mat()` will read all the graphs stored in the subfolder `graph/`. We also check here that the kernel obtained by the `Kernel` instance are identical to the ones stored in 'check/kernelMAT/'. To compute all the pairwise kernels of the graphs loaded above we can simply use the method `Kernel.run()`. We can here specify the value of lambda and the length of the walk.
+
+
+### Workflow with the iScore binaries
+
+iScore also comes with binaries that can be used directly from the command line. To illustrate the use of these libraries go to the folder `iScore/example/training_set/`. The subfolders are `pdb/` and `pssm/` contains here the pdb and pssm files we want to use to create a training set and model trained on it. The binary class corresponding to these conformations are specified in the file 'caseID.lst' This operation can here be done in one single step :
+
+```
+iScore.train
+```
+
+This binary will firstgenerate the graphs of the conformations stored in `pdb/` and `pssm/`. These graphs will be stored in `graph/`. The binary  will then compute the pairwise kernels of these graphs and store the kernel files in `kernel/`. Finally the binary will train a SVM model using the kernel files and the `caseID.lst` file that contains the binary class of the model.
+
+The calculated graphs and the svm model are then stored in a single tar file called here `training_set.tar.gz`. This file therefore contains all the information needed to predict binary classes of a test set using the trained model.
+
+To predict binary classes (and decision values) of new conformation go to the subfoler `test/`. Here 5 conformations are specified by the pdb and pssm files stored in `pdb/` and `pssm/` that we want to use as a test set and predict their binary class. This can be achieve with the binary `iScore.predict` following:
+
+```
+iScore.predict --archive ../training_set.tar.gz
+```
+
+This command will use first compute the graph of the comformation in the test set and store them in 'graph/'. The binary will then compute the pair wise kernels of each graph in the test set with all the graph contained in the training set that are stored in the tar file. Finally the binary will use the trained SVM model to predict the binary class and decision value of the conformation in the test set. The results are then stored in a text file and a pickle file `iScorePredict.pkl` and `iScorePredict.txt`. Opening the text file you will see :
+
+```
+Name       label      pred     decision_value
+1ACB_2w     None         0             -0.994
+1ACB_3w     None         0             -0.994
+1ACB_1w     None         0             -0.994
+1ACB_4w     None         0             -0.994
+1ACB_5w     None         0             -0.994
+
+```
+
+The ground truth label are here all None because they were not provided in the test set. This can simply be done by adding a `caseID.lst` in the `test/` subfolder.
+
+
+
+
 

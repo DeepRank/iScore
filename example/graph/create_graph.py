@@ -1,6 +1,4 @@
-from iScore.graph import GenGraph
-from iScore.graph import Graph
-import numpy as np
+from iScore.graph import GenGraph, Graph
 
 pdb = './input/1ATN.pdb'
 pssm = {'A':'./input/1ATN.A.pdb.pssm','B':'./input/1ATN.B.pdb.pssm'}
