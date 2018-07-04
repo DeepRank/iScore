@@ -8,22 +8,19 @@ You need:
   * libsvm  (https://www.csie.ntu.edu.tw/~cjlin/libsvm/)
   * pdb2sql (https://github.com/DeepRank/pdb2sql)
 
-The python bonding of libsvm may not add the path to the python path. Don't forget to add
-
-`export: PYTHONPATH="/path/to/libsvm/python:$PYTHONPATH"`
-
-to your .bashrc. Install iScore with
+The python binding of libsvm may not add the path to the python path. Don't forget to add `export: PYTHONPATH="/path/to/libsvm/python:$PYTHONPATH"` to your .bashrc. Install iScore with
 
 `pip install -e ./`
 
-as usual. Some executables are stored in `iScore/bin/`. Don't forget to add this to your bashrc as well
-`export PATH="/path/to/iScore/bin:$PATH"`
+as usual. Some executables are stored in `iScore/bin/`. Don't forget to add this to your bashrc as well: `export PATH="/path/to/iScore/bin:$PATH"`
 
 ## Test
 
 To test the install go to `test` and run the test suite by typing
 
-`pytest`
+```
+pytest
+```
 
 ## Example
 
@@ -48,9 +45,9 @@ gcheck = Graph('1ATN.mat')
 g.compare(gcheck)
 ```
 
-To generate graph the class `GenGraph` can be used with the path of the pdb file and pssm files given as a dictionary. The method `construct_graph()` will then assemble the graph that one can export with the method `export_graph()`.
+To generate graph the class `GenGraph` can be used with the path of the pdb file and pssm files given as a dictionary. The method `GenGraph.construct_graph()` will then assemble the graph that one can export with the method `export_graph()`.
 
-You can also read an existing graph with the class 'Graph'. Two `Graph` instance can be comapred with the metod 'compare()'.
+You can also read an existing graph with the class 'Graph'. Two `Graph` instance can be comapred with the metod 'Graph.compare()'.
 
 ### Computing Kernels
 
@@ -100,7 +97,7 @@ iScore also comes with binaries that can be used directly from the command line.
 iScore.train
 ```
 
-This binary will firstgenerate the graphs of the conformations stored in `pdb/` and `pssm/`. These graphs will be stored in `graph/`. The binary  will then compute the pairwise kernels of these graphs and store the kernel files in `kernel/`. Finally the binary will train a SVM model using the kernel files and the `caseID.lst` file that contains the binary class of the model.
+This binary will first generate the graphs of the conformations stored in `pdb/` and `pssm/`. These graphs will be stored in `graph/`. The binary  will then compute the pairwise kernels of these graphs and store the kernel files in `kernel/`. Finally the binary will train a SVM model using the kernel files and the `caseID.lst` file that contains the binary class of the model.
 
 The calculated graphs and the svm model are then stored in a single tar file called here `training_set.tar.gz`. This file therefore contains all the information needed to predict binary classes of a test set using the trained model.
 
@@ -110,7 +107,7 @@ To predict binary classes (and decision values) of new conformation go to the su
 iScore.predict --archive ../training_set.tar.gz
 ```
 
-This command will use first compute the graph of the comformation in the test set and store them in 'graph/'. The binary will then compute the pair wise kernels of each graph in the test set with all the graph contained in the training set that are stored in the tar file. Finally the binary will use the trained SVM model to predict the binary class and decision value of the conformation in the test set. The results are then stored in a text file and a pickle file `iScorePredict.pkl` and `iScorePredict.txt`. Opening the text file you will see :
+This command will use first compute the graph of the comformation in the test set and store them in `graph/`. The binary will then compute the pair wise kernels of each graph in the test set with all the graph contained in the training set that are stored in the tar file. These kernels will be stored in `kernel/`. Finally the binary will use the trained SVM model contained in the tar file to predict the binary class and decision value of the conformations in the test set. The results are then stored in a text file and a pickle file `iScorePredict.pkl` and `iScorePredict.txt`. Opening the text file you will see :
 
 ```
 Name       label      pred     decision_value
