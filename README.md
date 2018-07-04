@@ -5,8 +5,8 @@ Graph kernel approach of  conformation ranking
 ## Install
 
 You need:
-  . libsvm  (https://www.csie.ntu.edu.tw/~cjlin/libsvm/)
-  . pdb2sql (https://github.com/DeepRank/pdb2sql)
+  * libsvm  (https://www.csie.ntu.edu.tw/~cjlin/libsvm/)
+  * pdb2sql (https://github.com/DeepRank/pdb2sql)
 
 The python bonding of libsvm may not add the path to the python path. Don't forget to add
 
