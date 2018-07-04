@@ -6,6 +6,12 @@ from iScore.graph import iscore_graph
 from iScore.kernel import iscore_kernel
 from iScore.rank import iscore_svm
 
+
+##########################################################################
+# Predict the class of the graphs located by default in ./graph
+# using the trained model stored in the archive file training_set.tar.gz
+#########################################################################
+
 # parse arguments
 parser = argparse.ArgumentParser(description=' iScore - Predict the class of new conformations')
 

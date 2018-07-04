@@ -11,7 +11,14 @@ from svmutil import *
 class DataSet(object):
 
 	def __init__(self,trainID,Kfile,maxlen,testID=None):
+		"""Cretae a data set for SVM.
 
+		Args:
+		    trainID (str or list): comformation ID for the training set. if str it should be the dir where the graphs are stored
+		    Kfile (TYPE): File name containig th K matrix
+		    maxlen (TYPE): maximu wlak length for the kernel calculations
+		    testID (None, optional): comformation ID for the test set. if str it should be the dir where the graphs are stored
+		"""
 		self.train_name, self.train_class = self._get_ids(trainID)
 
 		if testID is None:
@@ -33,7 +40,18 @@ class DataSet(object):
 
 	@staticmethod
 	def _get_ids(idlist):
+		"""Get the ID if the training/test set
 
+		Args:
+		    idlist (str or list): if str should be a file containg : name class
+
+		Returns:
+		    list(str),list(int): names anc ground truth of the set
+
+		Raises:
+		    FileNotFoundError: If idlist is not an existing file
+		    ValueError: If the format of idlist is not understood
+		"""
 		if isinstance(idlist,str):
 			if os.path.isfile(idlist):
 
@@ -73,7 +91,11 @@ class DataSet(object):
 			raise ValueError(idlist, 'not a proper IDs file')
 
 	def get_K_matrix(self):
+		"""get the Kernel matrix of the set
 
+		Raises:
+		    ValueError: if maxlen was specified and is larger than the maximum possible length
+		"""
 		if not isinstance(self.Kfile,list):
 			self.Kfile = [self.Kfile]
 
@@ -126,13 +148,27 @@ class DataSet(object):
 class SVM(object):
 
 	def __init__(self,trainDataSet=None,testDataSet=None,load_model=None):
+		"""Class that handles the SVM training/testing process
+
+		Args:
+		    trainDataSet (None, DataSet, optional): data set for training
+		    testDataSet (None, DataSet, optional): data set for testing
+		    load_model (None, optional): load a model
+		"""
 		self.trainDataSet = trainDataSet
 		self.testDataSet = testDataSet
 		if load_model is not None:
 			self.model = svm_load_model(load_model)
 
 	def train(self,model_file_name=None):
+		"""Train the model using the the train dataset
 
+		Args:
+		    model_file_name (None, str, optional): File name to save the model
+
+		Raises:
+		    ValueError: If no training data set was specified
+		"""
 		if self.trainDataSet is None:
 			raise ValueError('You should specify a trainDataSet')
 
@@ -147,7 +183,17 @@ class SVM(object):
 
 	def archive(self,graph_path='./graph/',kernel_path='./kernel/',
 		        include_kernel=False,model_name='training_set.tar.gz'):
+		"""Create an archive file to store the model and the graphs/kernels
 
+		Args:
+		    graph_path (str, optional): directory containing the graphs
+		    kernel_path (str, optional): directory containing the kernels
+		    include_kernel (bool, optional): include the kernel file in the archive
+		    model_name (str, optional): file name of the archive
+
+		Raises:
+		    ValueError: if the grapg or kernel dir do not exists
+		"""
 		# init the model
 		tar = tarfile.open(model_name,"w:gz")
 
@@ -177,7 +223,14 @@ class SVM(object):
 		tar.close()
 
 	def predict(self,package_name):
+		"""Predict the class of a test set.
 
+		Args:
+		    package_name (str): archive file containg the model
+
+		Raises:
+		    ValueError: if no test set are specified
+		"""
 		if self.testDataSet is None:
 			raise ValueError('You should specify a testDataSet')
 
@@ -201,7 +254,11 @@ class SVM(object):
 		os.remove('./_tmp_model.pkl')
 
 	def export_prediction(self,fname):
+		"""Export the predicted values to file and/or pickle it
 
+		Args:
+		    fname (str): file name
+		"""
 		if fname.endswith('.pkl') or fname.endswith('.pckl'):
 			self._export_score_pickle(fname,
 									  self.testDataSet.test_name,
@@ -229,6 +286,14 @@ class SVM(object):
 
 	@staticmethod
 	def _export_score_pickle(fname,name,label,score):
+		"""Export the prediction as pickle file
+
+		Args:
+		    fname (str): file name
+		    name (list(str)): list of the conformation names
+		    label (TYPE): list of the conformation ground truth label
+		    score (TYPE): iScore
+		"""
 		data = {}
 		for i,n in enumerate(name):
 			data[n] = {'ground_truth' : label[i],
@@ -240,6 +305,14 @@ class SVM(object):
 
 	@staticmethod
 	def _export_score_text(fname,name,label,score):
+		"""Export the prediction as text file
+
+		Args:
+		    fname (str): file name
+		    name (list(str)): list of the conformation names
+		    label (TYPE): list of the conformation ground truth label
+		    score (TYPE): iScore
+		"""
 		f = open(fname,'w')
 		f.write('{:10} {:>5}     {:>5}     {:>14}\n'.format('Name','label','pred','decision_value'))
 		for i,n in enumerate(name):
@@ -256,6 +329,26 @@ def iscore_svm(train=False,train_class='caseID.lst',trainID=None,testID=None,
 				kernel='./kernel/',save_model='svm_model.pkl',load_model=None,
 				package_model=False,package_name=None,graph='./graph/',
 				include_kernel=False, maxlen = None,score_file='iScorePredict'):
+	"""Function called in the binary iScore.predict and iScore.train
+
+	Args:
+	    train (bool, optional): train or predict
+	    train_class (str, optional): file name containing the ID and classes of the train set
+	    trainID (None, optional): file containing the ID of the train set
+	    testID (None, optional): file containing the ID of the test set
+	    kernel (str, optional): directory containing the kernel files
+	    save_model (str, optional): save the model in a pickle file after training
+	    load_model (None, optional): load a model for testing
+	    package_model (bool, optional): Create an archive file containing the training set
+	    package_name (None, optional): Name of the archive file
+	    graph (str, optional): directory containing the graphs
+	    include_kernel (bool, optional): Include the kernels in the archive file
+	    maxlen (None, optional): maximum walk length
+	    score_file (str, optional): output file containg the prediction
+
+	Raises:
+	    ValueError: If the kernel files are nout found
+	"""
 
 	# figure out the kernel files
 	# if a dir was given all the file in that dir are considered
@@ -280,6 +373,7 @@ def iscore_svm(train=False,train_class='caseID.lst',trainID=None,testID=None,
 				        include_kernel=include_kernel,
 				        model_name=package_name)
 
+	# use a trained model for prediction
 	else:
 
 		if trainID is None:

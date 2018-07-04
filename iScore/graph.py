@@ -10,6 +10,24 @@ class Graph(object):
 
     def __init__(self,fname=None,file_type=None,
                       name=None,nodes_pssm=None,nodes_info=None,edges_index=None):
+        """Graph object corresponding to a given PDB file.
+
+        Example:
+
+        >>> from iScore.graph import Graph
+        >>> # load an exiting graph
+        >>> g = Graph('graph_file.pkl')
+        >>> # create a new one
+        >>> graph = Graph(name = name,nodes_pssm = nodes_pssm,nodes_info = nodes_info, edges_index = edges)
+
+        Args:
+            fname (None, optional): File name of an existing graph
+            file_type (None, optional): File type of fname ('.mat','.MAT','.pkl','.pckl')
+            name (None, optional): Name of the conformation
+            nodes_pssm (None, optional): Node PSSM data
+            nodes_info (None, optional): Node info data
+            edges_index (None, optional): index of the edges in the graph
+        """
 
         if fname is not None:
             self.load(fname,file_type)
@@ -23,7 +41,16 @@ class Graph(object):
                 self._process_data()
 
     def load(self,fname,file_type=None):
+        """Load an existing graph file.
 
+        Args:
+            fname (str): name of the file
+            file_type (None or str, optional): file extension
+                                               If None will try to find a suitable file
+
+        Raises:
+            FileNotFoundError: If the file is not found
+        """
         if not os.path.isfile(fname):
             raise FileNotFoundError('File %s not found' %fname)
 
@@ -44,7 +71,11 @@ class Graph(object):
             self._load_from_pickle(fname)
 
     def _load_from_matlab(self,fname):
+        """Load a matlab graph file
 
+        Args:
+            fname (str): name of the file
+        """
         data = spio.loadmat(fname,squeeze_me=True)['G']
 
         self.name = ext = os.path.splitext(fname)[0]
@@ -55,7 +86,11 @@ class Graph(object):
 
 
     def _load_from_pickle(self,fname):
+        """Load a pickle file.
 
+        Args:
+            fname (str): File name
+        """
         f =open(fname,'rb')
         data = pickle.load(f)
         f.close()
@@ -67,6 +102,7 @@ class Graph(object):
         self._process_data()
 
     def _process_data(self):
+        """Creates all the data needed for the graph."""
 
         self.num_nodes = np.int32(len(self.nodes_info_data))
         self.num_edges = np.int32(len(self.edges_index))
@@ -78,15 +114,27 @@ class Graph(object):
 
 
     def _valid_data(self):
+        """Check that the data is correct and does not contain Nones
+
+        Returns:
+            bool: boolean to ensure the validity of the data
+        """
         data = [self.nodes_pssm_data,self.nodes_info_data,self.edges_index]
         return np.all(data != None)
 
     def pickle(self,fname):
+        """Create a pickle file containing the graph
+
+        Args:
+            fname (str): filename
+        """
         f = open(fname,'wb')
         pickle.dump(self,f)
         f.close()
 
     def print(self):
+        """Print the graph to screen for debugging."""
+
         print('='*40)
         print('=   ', self.name)
         print('=    %d nodes' %self.num_nodes)
@@ -104,7 +152,17 @@ class Graph(object):
         print('\n')
 
     def compare(self, gcheck,verbose = True):
+        """Compare two graphs to see if they are identical.
+        This can be very usefull to check if the graph outputed
+        here are identical to the ones obtained with the matlab code
 
+        Args:
+            gcheck (Graph): Graph instance to be compared with the current graph
+            verbose (bool, optional): Print all sorts of information
+
+        Returns:
+            Bool: 1 if graphs are identical 0 otherwise
+        """
         same = 1
 
         if self.num_nodes != gcheck.num_nodes:
@@ -159,7 +217,11 @@ class Graph(object):
         return same
 
     def reconstruct_residue_graphs(self,pssm_dict):
+        """Build the graph with the residue name/number corresponding to the PDB
 
+        Args:
+            pssm_dict (dict): pssm information
+        """
         pssm = {}
         for chain in ['A','B']:
             pssm[chain] = self.read_PSSM_data(pssm_dict[chain])
@@ -208,6 +270,26 @@ class Graph(object):
 class GenGraph():
 
     def __init__(self,pdbfile,pssmfile,aligned=True,export=True,outname=None,cutoff=6.0):
+        """Generates a graph from pdb and pssm files.
+
+        Example:
+
+        >>> pdb = './1ATN.pdb'
+        >>> pssm = {'A':'./1ATN.A.pdb.pssm','B':'./1ATN.B.pdb.pssm'}
+        >>> outfile = './1ATN.pkl'
+        >>> check_file = './1ATN.mat'
+        >>> g = GenGraph(pdb,pssm,export=True,outname=outfile)
+        >>> gcheck = Graph(check_file)
+        >>> check = g.compare(gcheck)
+
+        Args:
+            pdbfile (str):  pdb files path
+            pssmfile (str): pssm files path
+            aligned (bool, optional): PSSM aligned to PDB
+            export (bool, optional): Export graph files
+            outname (None, optional): Directory containing all the exported graphs
+            cutoff (float, optional): Cutoff distance to select contact atoms
+        """
 
         # pdb file
         self.pdbfile = pdbfile
@@ -252,6 +334,14 @@ class GenGraph():
 
 
     def check_pssm_format(self,aligned):
+        """Check the format of the PSSM files
+
+        Args:
+            aligned (bool): Are the PSSM files supposed to be aligned to the PDBs
+
+        Returns:
+            bool: 1 if format is ok 0 otherwise
+        """
         if aligned:
             return len(self.pssm['A'][0]) == 25
         else:
@@ -269,6 +359,9 @@ class GenGraph():
         return list(map(lambda x: x.split(),list(filter(lambda x: all(f(x) for f in filters), data))))
 
     def get_aligned_pssm(self):
+        """Align the PSSM file to the pdb.
+        Untested in a while ... 
+        """
 
         self._align_sequences()
 
@@ -297,6 +390,7 @@ class GenGraph():
                     iResPSSM += 1
 
     def _align_sequences(self):
+        """Aling the squence given in a PDN and its PSSM files."""
 
         self.seq_aligned = {'pdb':{},'pssm':{}}
         for chain in ['A','B']:
@@ -306,6 +400,14 @@ class GenGraph():
 
 
     def _get_sequence(self,chain='A'):
+        """Get the sequence of a given chain in a PDB
+
+        Args:
+            chain (str, optional): Chain ID ('A','B')
+
+        Returns:
+            str: 1 letter encoding sequence
+        """
         if name in resmap_inv.keys():
             data = [(numb,self.resmap_inv[name]) for numb,name in self.pdb.get('resSeq,resName',chainID=chain)]
         return ''.join([v[1] for v in dict(data).items()])
@@ -334,9 +436,8 @@ class GenGraph():
 
         return seq1_ali, seq2_ali
 
-
-
     def process_aligned_pssm(self):
+        """get the information from an aligned PSSM file."""
 
         self.aligned_pssm, self.aligned_ic = {},{}
         for chain in ['A','B']:
@@ -346,9 +447,13 @@ class GenGraph():
                 self.aligned_pssm[(chain,resi,resn)] = l[4:24]
                 self.aligned_ic[(chain,resi,resn)] = l[24]
 
-
-
     def construct_graph(self,verbose=False,print_res_pairs=False):
+        """Construct the graph corresponding to a given PDB
+
+        Args:
+            verbose (bool, optional): print for debug
+            print_res_pairs (bool, optional): print the residue contact pairs for debug
+        """
 
         db = interface(self.pdbfile)
         res_contact_pairs = db.get_contact_residues(cutoff = self.cutoff, return_contact_pairs=True)
@@ -400,7 +505,11 @@ class GenGraph():
                     print('\t\t',v)
 
     def export_graph(self,fname):
+        """Export the graph of a given PDB
 
+        Args:
+            fname (str): file name
+        """
         nodes_data,nodes_info = [],[]
         for res in self.nodes:
 
@@ -428,6 +537,19 @@ class GenGraph():
 
 
 def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./graph/',aligned=True):
+    """Function called in the binary iScore.graph
+
+    Args:
+        pdb_path (str, optional): directory containing the pdb
+        pssm_path (str, optional): directory containing the pssm
+        select (None, optional): file containign the ID of the desired pdb. If None all PDBs are processed
+        outdir (str, optional): Directory where to store the data
+        aligned (bool, optional): Are the PSSM aligned
+
+    Raises:
+        FileNotFoundError: If select has been specified but does not correspond to an existing file
+        NotADirectoryError: If pdb_path or pssm_path were not found
+    """
 
     # make sure that the dir containing the PDBs exists
     if not os.path.isdir(pdb_path):

@@ -33,14 +33,14 @@ class Kernel(object):
 		Example:
 
 		>>>from iScore.graph import Graph
-		>>>from iScore.score_graph import ScoreGraph
+		>>>from iScore.kernel import Kernel
 		>>># init and load the data
-		>>>GR = ScoreGraph()
-		>>>GR.import_from_mat()
+		>>>ker = Kernel()
+		>>>ker.import_from_mat()
 		>>># get the path of the check file
-		>>>checkfile = GR.get_check_file()
+		>>>checkfile = ker.get_check_file()
 		>>># run the calculations
-		>>>GR.run(lamb=1.0,walk=4,check=checkfile)
+		>>>ker.run(lamb=1.0,walk=4,check=checkfile)
 
 
 		Args:
@@ -72,8 +72,8 @@ class Kernel(object):
 	##############################################################
 
 	def import_from_mat(self):
-		"""Import the data from the selected graph files.
-		"""
+		"""Import the data from the selected graph files."""
+
 		self.max_num_edges_train = 0
 		self.max_num_edges_test = 0
 

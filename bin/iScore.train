@@ -5,6 +5,12 @@ from iScore.graph import iscore_graph
 from iScore.kernel import iscore_kernel
 from iScore.rank import iscore_svm
 
+
+##########################################################################
+# Train a model
+#########################################################################
+
+
 # parse arguments
 parser = argparse.ArgumentParser(description=' iScore - Train a model')
 

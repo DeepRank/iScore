@@ -3,6 +3,12 @@ import os
 from iScore.graph import iscore_graph
 import argparse
 
+#################################################################
+# Create the graphs that correspond to the pdb and pssm files
+# located by default in :
+#	./pdb
+#	./pssm
+#################################################################
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--pdb_path', type = str, default='./pdb',help='path where to find the PDB files')

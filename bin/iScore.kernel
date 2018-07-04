@@ -2,6 +2,12 @@
 from iScore.kernel import iscore_kernel
 import argparse
 
+#################################################################
+# Compute the pairwise kernels of the graphs that are
+# located by default in :
+#	./graph
+#################################################################
+
 # parse arguments
 parser = argparse.ArgumentParser(description=' iScore - Compute Kernels')
 
