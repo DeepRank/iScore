@@ -45,7 +45,7 @@ gcheck = Graph('1ATN.mat')
 g.compare(gcheck)
 ```
 
-To generate graph the class `GenGraph` can be used with the path of the pdb file and pssm files given as a dictionary. The method `GenGraph.construct_graph()` will then assemble the graph that one can export with the method `export_graph()`.
+To generate graph the class `GenGraph` can be used with the path of the pdb file and pssm files given as a dictionary. The method `GenGraph.construct_graph()` will then assemble the graph that one can export with the method `Graph.export_graph()`.
 
 You can also read an existing graph with the class 'Graph'. Two `Graph` instance can be comapred with the metod 'Graph.compare()'.
 
