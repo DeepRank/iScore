@@ -125,7 +125,10 @@ The ground truth label are here all None because they were not provided in the t
 
 ### MPI Binaries
 
-MPI enabled binaries allows to split the calculation of the graph and kernel over multiple core easily. You need `mpi4py` installed. We can illustrate their use with the example in `iScore/example/training_set/` already  used above. To create the training set using mpi simply go in that directory and type :
+MPI enabled binaries allows to split the calculation of the graph and kernel over multiple core easily. You need `mpi4py` installed. *At the moment it is impossible to use simultaneously the MPI execs and the CUDA kernels.* If you use the MPI binaries all the kernels will be calculated on CPUs only.
+
+
+ We can illustrate their use with the example in `iScore/example/training_set/` already  used above. To create the training set using mpi simply go in that directory and type :
 
 ```
 mpiexec -n 2 iScore.train.mpi
