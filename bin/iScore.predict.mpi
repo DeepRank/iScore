@@ -2,9 +2,10 @@
 import os
 import subprocess
 import argparse
-from iScore.graph import iscore_graph
-from iScore.kernel import iscore_kernel
+from iScore.graph import iscore_graph_mpi
+from iScore.kernel import iscore_kernel_mpi
 from iScore.rank import iscore_svm
+from mpi4py import MPI
 
 ##########################################################################
 # Predict the class of the graphs located by default in ./graph
@@ -27,20 +28,33 @@ parser.add_argument('--archive',default='training_set.tar.gz',help='model archiv
 args = parser.parse_args()
 
 
-# create the graphs
-if not os.path.isdir(args.graph):
-	os.mkdir(args.graph)
-iscore_graph(outdir=args.graph)
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
 
+# create the graphs
+if rank == 0:
+	if not os.path.isdir(args.graph):
+		os.mkdir(args.graph)
+
+comm.Barrier()
+
+iscore_graph_mpi(outdir=args.graph,rank=rank,size=size,mpi_comm=comm)
 
 # compute the kernels
-if not os.path.isdir(args.kernel):
-	os.mkdir(args.kernel)
+if rank == 0:
+	if not os.path.isdir(args.kernel):
+		os.mkdir(args.kernel)
+
+comm.Barrier()
+
 kfile = os.path.join(args.kernel,'kernel.pckl')
-iscore_kernel_mpi(test_graph=args.graph,train_archive=args.archive,outfile=kfile)
+iscore_kernel_mpi(test_graph=args.graph,train_archive=args.archive,outfile=kfile,rank=rank,size=size)
 
+comm.Barrier()
 
-# predcit the classes
-iscore_svm(load_model=None,package_name=args.archive)
+# predcit the model
+if rank == 0:
+	iscore_svm(load_model=None,package_name=args.archive)
 
 

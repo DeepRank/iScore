@@ -2,6 +2,7 @@
 import os
 from iScore.graph import iscore_graph_mpi
 import argparse
+from mpi4py import MPI
 
 #################################################################
 # Create the graphs that correspond to the pdb and pssm files
@@ -19,7 +20,14 @@ parser.add_argument('--not_aligned',action='store_true',help='PSSM and PDB are N
 args = parser.parse_args()
 
 aligned = not args.not_aligned
-iscore_graph_mpi(pdb_path=args.pdb_path, pssm_path=args.pssm_path, select=args.select, outdir=args.outdir, aligned=aligned)
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+iscore_graph_mpi(pdb_path=args.pdb_path, pssm_path=args.pssm_path,
+	             select=args.select, outdir=args.outdir, aligned=aligned,
+	             rank=rank, size=size,mpi_comm=comm)
 
 
 

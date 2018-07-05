@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from iScore.kernel import iscore_kernel_mpi
 import argparse
+from mpi4py import MPI
+
 
 #################################################################
 # Compute the pairwise kernels of the graphs that are
@@ -36,7 +38,13 @@ parser.add_argument('--method',type=str,default='vect',help="Method used in the 
 
 args = parser.parse_args()
 
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+
 iscore_kernel_mpi(testID=args.testID,trainID=args.trainID,
 	              test_graph=args.test_graph, train_graph=args.train_graph,
 	              check=args.check, outfile=args.outfile,test=args.test,
-	              lamb=args.lamb, walk=args.walk, method=args.method)
+	              lamb=args.lamb, walk=args.walk, method=args.method,
+	              rank=rank,size=size)
