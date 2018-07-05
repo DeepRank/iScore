@@ -7,6 +7,7 @@ Graph kernel approach of  conformation ranking
 You need:
   * libsvm  (https://www.csie.ntu.edu.tw/~cjlin/libsvm/)
   * pdb2sql (https://github.com/DeepRank/pdb2sql)
+  * mpi4py (pip install mpi4py)
 
 The python binding of libsvm may not add the path to the python path. Don't forget to add `export: PYTHONPATH="/path/to/libsvm/python:$PYTHONPATH"` to your .bashrc. Install iScore with
 
@@ -122,6 +123,31 @@ Name       label      pred     decision_value
 The ground truth label are here all None because they were not provided in the test set. This can simply be done by adding a `caseID.lst` in the `test/` subfolder.
 
 
+### MPI Binaries
+
+MPI enabled binaries allows to split the calculation of the graph and kernel over multiple core easily. You need `mpi4py` installed. We can illustrate their use with the example in `iScore/example/training_set/` already  used above. To create the training set using mpi simply go in that directory and type :
+
+```
+mpiexec -n 2 iScore.train.mpi
+```
+
+This command will use two core to compute the training set (graphs, kernel, svm). Similarly to use the archive file generated here go to the `test` subfolder and type:
+
+```
+mpiexec -n 2 iScore.predcit.mpi
+```
+
+This command will compute the graphs and their pair wise kernel witht the training set using 2 cores.
 
 
+Of course if you're imteding to run that on a large number of core on a cluster write a small bash script like:
 
+```
+#!/bin/bash
+#PBS -l nodes=1:ppn=48
+#PBS -N svm_train
+
+mpiexec -n 48 iScore.train.mpi
+```
+
+and submit that job the queue.
