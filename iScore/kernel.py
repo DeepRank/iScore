@@ -71,7 +71,7 @@ class Kernel(object):
 	#
 	##############################################################
 
-	def import_from_mat(self):
+	def import_from_mat(self,mpi_rank=0,mpi_size=1):
 		"""Import the data from the selected graph files."""
 
 		self.max_num_edges_train = 0
@@ -114,6 +114,14 @@ class Kernel(object):
 				self.max_num_edges_train = np.max([self.max_num_edges_train,self.train_graphs[name].num_edges])
 
 		test_names  = self._get_file_names(self.testIDs,self.test_graph)
+
+		# split the test names
+		if mpi_size > 1:
+			nitem = int(len(test_names)/mpi_size)
+			start, end = mpi_rank*nitem, (mpi_rank+1)*nitem
+			test_names = test_names[start:end]
+
+		# get the test graphs
 		self.test_graphs = OrderedDict()
 		for name in test_names:
 			self.test_graphs[name] = Graph(self.test_graph + '/' + name)
@@ -185,7 +193,7 @@ class Kernel(object):
 	#
 	##############################################################
 
-	def run(self,lamb,walk,outfile='kernel.pkl',cuda=False,gpu_block=(8,8,1),check=None,test=False):
+	def run(self,lamb,walk,outfile='kernel.pkl',cuda=False,gpu_block=(8,8,1),check=None,test=False,mpi_rank=0,mpi_size=1):
 		"""Compute all the K values for all the graph pairs.
 
 		Args:
@@ -197,6 +205,10 @@ class Kernel(object):
 		    check (None, optional): Check the results
 		    test (bool,otional): if True only compute the first pair (no output saved)
 		"""
+
+		if cuda and size > 1:
+			print('MPI and CUDA implementation not supported (yet)\n CUDA disabled.')
+			cuda = False
 
 		# do all the single-time cuda operations
 		if cuda:
@@ -235,6 +247,11 @@ class Kernel(object):
 			else:
 				trainID_check = trainID_check.tolist()
 
+		# rename the output file if mpi
+		if mpi_size > 1:
+			fname,ext = os.path.splitext(outfile)
+			outfile = fname + '_{:04d}'.format(mpi_rank) + ext
+
 		# store the check
 		check_values = []
 
@@ -243,7 +260,7 @@ class Kernel(object):
 			for i2,(name2,G2) in enumerate(self.train_graphs.items()):
 
 				print('')
-				print(name1,name2)
+				print(mpi_rank,name1,name2)
 				print('-'*20)
 				t0 = time()
 
@@ -819,3 +836,35 @@ def iscore_kernel(testID=None,trainID=None,
 			   gpu_block=tuple(gpu_block),
 			   check=checkfile,
 			   test=test)
+
+def iscore_kernel_mpi(testID=None,trainID=None,
+	                  test_graph='./graph', train_graph='./graph',
+	                  train_archive=None,
+	                  check=None, outfile='kernel.pkl',test=False,
+	                  lamb=1, walk=4, method='vect'):
+
+	from mpi4py import MPI
+
+	comm = MPI.COMM_WORLD
+	rank = comm.Get_rank()
+	size = comm.Get_size()
+
+
+	# init and load the data
+	ker = Kernel(testIDs=testID,test_graph = test_graph,
+				 trainIDs=trainID,train_graph=train_graph,
+		         train_archive=train_archive,method=method)
+
+	ker.import_from_mat(mpi_rank=rank,mpi_size=size)
+
+	# get the path of the check file
+	checkfile = ker.get_check_file(check)
+
+	# run the entire calculation
+	ker.run(lamb=lamb,
+		   walk=walk,
+		   outfile=outfile,
+		   check=checkfile,
+		   test=test,
+		   mpi_rank=rank,
+		   mpi_size=size)

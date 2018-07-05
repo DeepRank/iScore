@@ -29,6 +29,7 @@ class Graph(object):
             edges_index (None, optional): index of the edges in the graph
         """
 
+        self.fname = fname
         if fname is not None:
             self.load(fname,file_type)
         else:
@@ -212,7 +213,7 @@ class Graph(object):
                         print('Node Mapping Issues')
                     same = 0
             if same and verbose:
-                print('Graphs %s and %s are identical' %(self.name,gcheck.name))
+                print('Graphs %s and %s are identical' %(self.fname,gcheck.fname))
 
         return same
 
@@ -345,7 +346,7 @@ class GenGraph():
         if aligned:
             return len(self.pssm['A'][0]) == 25
         else:
-            return len(self.pssm['A'][0]) == 48
+            return len(self.pssm['A'][0]) == 44 #48 ?
 
 
     def read_PSSM_data(self,fname):
@@ -408,8 +409,10 @@ class GenGraph():
         Returns:
             str: 1 letter encoding sequence
         """
-        if name in resmap_inv.keys():
-            data = [(numb,self.resmap_inv[name]) for numb,name in self.pdb.get('resSeq,resName',chainID=chain)]
+        data = []
+        for numb,name in self.pdb.get('resSeq,resName',chainID=chain):
+            if name in self.resmap_inv.keys():
+                data.append((numb,self.resmap_inv[name]))
         return ''.join([v[1] for v in dict(data).items()])
 
     @staticmethod
@@ -590,6 +593,106 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./gra
     for name in pdbs:
 
         print('Creating graph of PDB %s' %name)
+
+        # pdb name
+        pdbfile = os.path.join(pdb_path,name)
+
+        # mol name and base name
+        mol_name = os.path.splitext(name)[0]
+        base_name = mol_name.split('_')[0]
+
+        # pssms files
+        pssmA = os.path.join(pssm_path,mol_name+'.A.pdb.pssm')
+        pssmB = os.path.join(pssm_path,mol_name+'.B.pdb.pssm')
+
+        # check if the pssms exists
+        if os.path.isfile(pssmA) and os.path.isfile(pssmB):
+            pssm = {'A':pssmA,'B':pssmB}
+        else:
+            raise FileNotFoundError(pssmA + ' or ' + pssmB + ' not found')
+
+        # output file
+        graphfile = os.path.join(outdir+mol_name+'.pckl')
+
+        # create the graphs
+        gen = GenGraph(pdbfile,pssm,aligned=aligned,outname=graphfile)
+
+
+
+def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./graph/',aligned=True):
+    """Function called in the binary iScore.graph.mpi
+
+    Args:
+        pdb_path (str, optional): directory containing the pdb
+        pssm_path (str, optional): directory containing the pssm
+        select (None, optional): file containign the ID of the desired pdb. If None all PDBs are processed
+        outdir (str, optional): Directory where to store the data
+        aligned (bool, optional): Are the PSSM aligned
+
+    Raises:
+        FileNotFoundError: If select has been specified but does not correspond to an existing file
+        NotADirectoryError: If pdb_path or pssm_path were not found
+    """
+
+    from mpi4py import MPI
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+
+
+    if rank == 0:
+
+        # make sure that the dir containing the PDBs exists
+        if not os.path.isdir(pdb_path):
+            raise NotADirectoryError(pdb_path + ' is not a directory')
+        else:
+            pdb_files = os.listdir(pdb_path)
+
+        # make sure that the dir containing the PSSMs exists
+        if not os.path.isdir(pssm_path):
+            raise NotADirectoryError(pssm_path + ' is not a directory')
+        else:
+            pssm_files = os.listdir(pssm_path)
+
+        # create the outdir if necessary
+        if not os.path.isdir(outdir):
+            os.mkdir(outdir)
+
+        # check if we want to select a subset of PDBs
+        if select is not None:
+            if not os.path.isfile(select):
+                raise FileNotFoundError(select + ' is not a file')
+            else:
+                with open(select,'r') as f:
+                    select = f.readlines()
+        else:
+            select = None
+
+        # get the list of PDB names
+        pdbs = list(filter(lambda x: x.endswith('.pdb'),os.listdir(pdb_path)))
+        if select is not None:
+            pdbs = list(filter(lambda x: x.startswith(select),pdbs))
+
+        # create the output file
+        if not os.path.isdir(outdir):
+            os.mkdir(outdir)
+
+        # create the partial list
+        pdbs = [pdbs[i::size] for i in range(size)]
+        local_pdbs = pdbs[0]
+
+        # send the list
+        for iP in range(1,size):
+            comm.send(pdbs[iP],dest=iP,tag=11)
+
+    else:
+        local_pdbs = comm.recv(source=0,tag=11)
+
+    # loop over all the PDBs
+    for name in local_pdbs:
+
+        print('[%03d] -- Creating graph of PDB %s' %(rank,name))
 
         # pdb name
         pdbfile = os.path.join(pdb_path,name)
