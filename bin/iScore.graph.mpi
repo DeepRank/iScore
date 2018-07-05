@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+import os
+from iScore.graph import iscore_graph_mpi
+import argparse
+
+#################################################################
+# Create the graphs that correspond to the pdb and pssm files
+# located by default in :
+#	./pdb
+#	./pssm
+#################################################################
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--pdb_path', type = str, default='./pdb',help='path where to find the PDB files')
+parser.add_argument('--pssm_path', type = str, default='./pssm',help='path where to find the PSSM files')
+parser.add_argument('--select', type = str, default=None, help='File containing the name of the pdb to process')
+parser.add_argument('--outdir',type = str, default='./graph/',help='Directory where to store the graphs')
+parser.add_argument('--not_aligned',action='store_true',help='PSSM and PDB are NOT aligned')
+args = parser.parse_args()
+
+aligned = not args.not_aligned
+iscore_graph_mpi(pdb_path=args.pdb_path, pssm_path=args.pssm_path, select=args.select, outdir=args.outdir, aligned=aligned)
+
+
+
+
+
+
+
+
