@@ -117,7 +117,7 @@ class Kernel(object):
 
 		# split the test names
 		if mpi_size > 1:
-			nitem = int(len(test_names)/mpi_size)
+			nitem = int(np.ceil(len(test_names)/mpi_size))
 			start, end = mpi_rank*nitem, (mpi_rank+1)*nitem
 			test_names = test_names[start:end]
 
@@ -841,14 +841,7 @@ def iscore_kernel_mpi(testID=None,trainID=None,
 	                  test_graph='./graph', train_graph='./graph',
 	                  train_archive=None,
 	                  check=None, outfile='kernel.pkl',test=False,
-	                  lamb=1, walk=4, method='vect'):
-
-	from mpi4py import MPI
-
-	comm = MPI.COMM_WORLD
-	rank = comm.Get_rank()
-	size = comm.Get_size()
-
+	                  lamb=1, walk=4, method='vect',rank=0,size=1):
 
 	# init and load the data
 	ker = Kernel(testIDs=testID,test_graph = test_graph,

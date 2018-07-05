@@ -619,7 +619,8 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./gra
 
 
 
-def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./graph/',aligned=True):
+def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
+                     outdir='./graph/',aligned=True,rank=0,size=1,mpi_comm=None):
     """Function called in the binary iScore.graph.mpi
 
     Args:
@@ -633,12 +634,6 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='.
         FileNotFoundError: If select has been specified but does not correspond to an existing file
         NotADirectoryError: If pdb_path or pssm_path were not found
     """
-
-    from mpi4py import MPI
-
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-    size = comm.Get_size()
 
 
     if rank == 0:
@@ -684,10 +679,10 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='.
 
         # send the list
         for iP in range(1,size):
-            comm.send(pdbs[iP],dest=iP,tag=11)
+            mpi_comm.send(pdbs[iP],dest=iP,tag=11)
 
     else:
-        local_pdbs = comm.recv(source=0,tag=11)
+        local_pdbs = mpi_comm.recv(source=0,tag=11)
 
     # loop over all the PDBs
     for name in local_pdbs:
