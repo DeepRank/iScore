@@ -461,17 +461,25 @@ class GenGraph():
         db = interface(self.pdbfile)
         res_contact_pairs = db.get_contact_residues(cutoff = self.cutoff, return_contact_pairs=True)
 
-        # remove the non residues
+        # tag the non residues
+        keys_to_pop = []
         for res in res_contact_pairs.keys():
             if res[2] not in self.resmap_inv:
-                res_contact_pairs.pop(res,None)
+                keys_to_pop.append(res)
+                #res_contact_pairs.pop(res,None)
                 Warning('--> Residue ',res,' not valid')
 
-        # remove the ones that are not in PSSM
+        # tag the ones that are not in PSSM
         for res in list(res_contact_pairs.keys()):
             if res not in self.aligned_pssm:
-                res_contact_pairs.pop(res,None)
+                keys_to_pop.append(res)
+                #res_contact_pairs.pop(res,None)
                 Warning('--> Residue ',res,' not found in PSSM file')
+
+        # Remove the residue
+        for res in keys_to_pop:
+            if res in res_contact_pairs:
+                res_contact_pairs.pop(res,None)
 
         # get a list of residues of chain B
         # automatically remove the ones that are not proper res
