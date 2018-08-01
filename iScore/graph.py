@@ -2,7 +2,7 @@ import os
 import numpy as np
 import scipy.io as spio
 import pickle
-from pdb2sql.pdb2sql import pdb2sql
+from pdb2sql.pdb2sqlcore import pdb2sql
 from pdb2sql.interface import interface
 from Bio import pairwise2
 
