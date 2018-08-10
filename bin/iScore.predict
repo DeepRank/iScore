@@ -37,7 +37,7 @@ iscore_graph(outdir=args.graph)
 if not os.path.isdir(args.kernel):
 	os.mkdir(args.kernel)
 kfile = os.path.join(args.kernel,'kernel.pckl')
-iscore_kernel_mpi(test_graph=args.graph,train_archive=args.archive,outfile=kfile)
+iscore_kernel(test_graph=args.graph,train_archive=args.archive,outfile=kfile)
 
 
 # predcit the classes
