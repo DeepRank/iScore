@@ -294,7 +294,7 @@ class GenGraph():
 
         # pdb file
         self.pdbfile = pdbfile
-        self.pdb = pdb2sql(self.pdbfile)
+        self.pdb = pdb2sql(self.pdbfile,no_extra=True)
 
         # residue name translation dict
         self.resmap = {
