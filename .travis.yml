@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 distr : "trusty"
 
 language: python
@@ -29,16 +29,15 @@ before_install:
   - pip install -q codacy-coverage
   - pip install -q coveralls
 
-
-  # install pdb2sql
-  - pip install --index-url https://test.pypi.org/simple/ pdb2sql
-
   # install mpi4py
   - pip install mpi4py
 
   # libsvm
-  - conda install -c conda-forge libsvm
+  #- conda install -c conda-forge libsvm
+  - sudo apt-get install python-libsvm
 
+  # install pdb2sql
+  - pip install --index-url https://test.pypi.org/simple/ pdb2sql
 
 
 install:
