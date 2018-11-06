@@ -1,0 +1,153 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Installation &#8212; iScore  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Computing PSSM files" href="pssm.html" />
+    <link rel="prev" title="Welcome to iScore’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="pssm.html" title="Computing PSSM files"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to iScore’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iScore  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>Using Support Vector Machine on Graph Kernels for protein-protein interface scoring</p>
+<p>iScore uses support vector machine to classify protein-protein interfaces in enar natives and non-near natives. To this purpose, each interface is encoded in a graph where each node corresponds to the Position Specific Similarity Matrix (PSSM) of a given residue. The nodes can be connected if they participate in a contact between the two different proteins.</p>
+<p>The graph of a given conformation is then used to computeits kernel with a training set of carefully chosen conforations representing near native and decoys. A support vector machine is then adopted to predict if the conformation under scrutiny is near native or not.</p>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>The code is hosted on <a class="reference external" href="https://github.com/DeepRank/iScore">Github</a> (<a class="reference external" href="https://github.com/DeepRank/iScore">https://github.com/DeepRank/iScore</a>)</p>
+<p>To install the code</p>
+<blockquote>
+<div><ul class="simple">
+<li>clone the repository <code class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/DeepRank/iScore.git</span></code></li>
+<li>go there <code class="docutils literal"><span class="pre">cd</span> <span class="pre">iScore</span></code></li>
+<li>install the module <code class="docutils literal"><span class="pre">pip</span> <span class="pre">insall</span> <span class="pre">-e</span> <span class="pre">./</span></code></li>
+</ul>
+</div></blockquote>
+<div class="section" id="test-the-installation">
+<h2>Test the installation<a class="headerlink" href="#test-the-installation" title="Permalink to this headline">¶</a></h2>
+<p>To test the module go to the test folder <code class="docutils literal"><span class="pre">cd</span> <span class="pre">./test</span></code> and execute the following test : <code class="docutils literal"><span class="pre">pytest</span></code></p>
+<p>These tests are automatically run on Travis CI at each new push.
+So if the build button display passing they should work !</p>
+</div>
+<div class="section" id="requiried-dependencies">
+<h2>Requiried Dependencies<a class="headerlink" href="#requiried-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>The code is written in Python3. Several packages are required to run the code but most are pretty standard. Here is an non-exhaustive list of dependencies</p>
+<blockquote>
+<div><ul class="simple">
+<li>Numpy</li>
+<li>Biopython</li>
+<li>libsvm</li>
+<li>mpi4py</li>
+<li>pdb2sql</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#test-the-installation">Test the installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requiried-dependencies">Requiried Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pssm.html">Computing PSSM files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph.html">Graphs and Kernels :</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflow.html">iScore Workflow</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to iScore’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pssm.html"
+                        title="next chapter">Computing PSSM files</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/intro.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="pssm.html" title="Computing PSSM files"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to iScore’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iScore  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Nicolas Renaud.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

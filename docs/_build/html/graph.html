@@ -1,0 +1,158 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Graphs and Kernels : &#8212; iScore  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="iScore Workflow" href="workflow.html" />
+    <link rel="prev" title="Computing PSSM files" href="pssm.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="workflow.html" title="iScore Workflow"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pssm.html" title="Computing PSSM files"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iScore  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="graphs-and-kernels">
+<h1>Graphs and Kernels :<a class="headerlink" href="#graphs-and-kernels" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="generating-the-graphs">
+<h2>Generating the Graphs :<a class="headerlink" href="#generating-the-graphs" title="Permalink to this headline">¶</a></h2>
+<p>The first step in iSCore is to generate the connections graph of the itnerface. In this graph each node is represented by the PSSM of a residue. The nodes are connected if they form a contact pair between the two proteins.</p>
+<p>To create the graph one needs the PDB file of the interface and the two PSSM files (one for each chain) created by the PSSMGen tool. To generate the graph simply use :</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">iScore.graph</span> <span class="k">import</span> <span class="n">GenGraph</span><span class="p">,</span> <span class="n">Graph</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pdb</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">pdb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pssm</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span><span class="s1">&#39;name.A.pdb.pssm&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">:</span><span class="s1">&#39;name.B.pdb.pssm&#39;</span><span class="p">}</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">GenGraph</span><span class="p">(</span><span class="n">pdb</span><span class="p">,</span><span class="n">pssm</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">construct_graph</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">export_graph</span><span class="p">(</span><span class="s1">&#39;name.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This simple example will construct the connection graph and export it in a pickle file. A working example can be found in <code class="docutils literal"><span class="pre">example/graph/create_graph.py</span></code></p>
+<p>The function <code class="docutils literal"><span class="pre">iscore_graph()</span></code> facilitate the generation of a large number of conformations. By default this function will create the graphs of all the conformations stored in the subfolder <code class="docutils literal"><span class="pre">./pdb/</span></code> using the pssm files stored in the subfolder <code class="docutils literal"><span class="pre">./pssm/</span></code>. The resulting graphs will be stored in the subfolder <code class="docutils literal"><span class="pre">./graph/</span></code>.</p>
+</div>
+<div class="section" id="generating-the-graph-kernels">
+<h2>Generating the Graph Kernels :<a class="headerlink" href="#generating-the-graph-kernels" title="Permalink to this headline">¶</a></h2>
+<p>Once we have calculated the graphs of multiple conformation we can simply compute the kernel of the different pairs using iScore. An example can be found at <code class="docutils literal"><span class="pre">example/kernel/create_kernel.py</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">iScore.graph</span> <span class="k">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">iscore_graph</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">iScore.kernel</span> <span class="k">import</span> <span class="n">Kernel</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># create all the graphs of the pdb in ./pdb/</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iscore_graph</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#init and load the data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ker</span> <span class="o">=</span> <span class="n">Kernel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ker</span><span class="o">.</span><span class="n">import_from_mat</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># run the calculations</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ker</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">lamb</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">walk</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">check</span><span class="o">=</span><span class="n">checkfile</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The kernel between the two graphs computed above is calculated with the class <cite>Kernel()</cite>. By default the method <cite>Kernel.import_from_mat()</cite> will read all the graphs stored in the subfolder <cite>graph/</cite>. To compute all the pairwise kernels of the graphs loaded above we can simply use the method <cite>Kernel.run()</cite>. We can here specify the value of lambda and the length of the walk.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pssm.html">Computing PSSM files</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Graphs and Kernels :</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generating-the-graphs">Generating the Graphs :</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-the-graph-kernels">Generating the Graph Kernels :</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="workflow.html">iScore Workflow</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pssm.html"
+                        title="previous chapter">Computing PSSM files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="workflow.html"
+                        title="next chapter">iScore Workflow</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/graph.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="workflow.html" title="iScore Workflow"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pssm.html" title="Computing PSSM files"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iScore  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Nicolas Renaud.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>
