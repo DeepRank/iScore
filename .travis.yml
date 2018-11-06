@@ -29,6 +29,9 @@ before_install:
   - pip install -q codacy-coverage
   - pip install -q coveralls
 
+  # biopython
+  - conda install -c anaconda biopython
+
   # install mpi4py
   - sudo apt-get install libopenmpi-dev
   - pip install mpi4py
