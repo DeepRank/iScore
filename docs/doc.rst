@@ -7,6 +7,9 @@ All the prototypes of the class/methods are here specified
    :maxdepth: 4
    :caption: Documentation:
 
+.. automodule:: iScore
+
+
 Graph
 ----------------------------------------
 

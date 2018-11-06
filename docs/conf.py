@@ -27,9 +27,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
             return MagicMock()
 
-MOCK_MODULES = ['numpy', 'scipy','h5py','scipy.signal','scipy.io','torch','torch.utils',
-                'torch.utils.data', 'matplotlib','matplotlib.pyplot','torch.autograd','torch.nn',
-                'torch.optim','torch.cuda','tqdm']
+MOCK_MODULES = ['numpy', 'scipy','h5py','scipy.sparse','scipy.io','torch','tqdm']
 
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 sys.path.insert(0, os.path.abspath('../'))
