@@ -38,6 +38,8 @@ before_install:
   - sudo apt-get install python-libsvm
 
   # install pdb2sql
+  - pip install numpy
+  - pip install scipy
   - pip install --index-url https://test.pypi.org/simple/ pdb2sql
 
 
