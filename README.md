@@ -134,7 +134,7 @@ MPI enabled binaries allows to split the calculation of the graph and kernel ove
 mpiexec -n 2 iScore.train.mpi
 ```
 
-This command will use two core to compute the training set (graphs, kernel, svm). Similarly to use the archive file generated here go to the `test` subfolder and type:
+This command will use two core to compute the training set (graphs, kernel, svm). Similarly to use the archive file generated here go to the `test` subfolder and type :
 
 ```
 mpiexec -n 2 iScore.predcit.mpi
