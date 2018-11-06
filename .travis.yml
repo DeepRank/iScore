@@ -30,6 +30,7 @@ before_install:
   - pip install -q coveralls
 
   # install mpi4py
+  - sudo apt-get install libopenmpi-dev
   - pip install mpi4py
 
   # libsvm
