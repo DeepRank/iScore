@@ -27,7 +27,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
             return MagicMock()
 
-MOCK_MODULES = ['numpy', 'scipy','h5py','scipy.signal','torch','torch.utils',
+MOCK_MODULES = ['numpy', 'scipy','h5py','scipy.signal','scipy.io','torch','torch.utils',
                 'torch.utils.data', 'matplotlib','matplotlib.pyplot','torch.autograd','torch.nn',
                 'torch.optim','torch.cuda','tqdm']
 

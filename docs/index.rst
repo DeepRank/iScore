@@ -15,6 +15,7 @@ Welcome to iScore's documentation!
    graph
    svm
    workflow
+   doc
 
 Indices and tables
 ==================

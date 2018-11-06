@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='iScore',
-    description='Graph based Scoring of protein-protein conformations',
+    description='SVM Graph Kernels for Protein Interface Scoring',
     version='0.0',
     url='https://github.com/DeepRank/iScore',
     packages=['iScore'],
@@ -12,8 +12,6 @@ setup(
     install_requires=[
         'numpy >= 1.13',
         'scipy'],
-        #'tarfiles',
-        #'pickle'],
 
     extras_require= {
         'test': ['nose', 'coverage', 'pytest',
