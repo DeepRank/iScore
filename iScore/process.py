@@ -59,7 +59,8 @@ class DataProcess(object):
             d = f.readlines()
 
         for l in d:
-            ID, label = l[0], int(l[0])
+            ls = l.split()
+            ID, label = ls[0], int(ls[1])
 
             try:
                 index = self.data['ID'].index(ID)
@@ -69,7 +70,7 @@ class DataProcess(object):
                 raise ValueError("ID %s not found in data" %ID)
 
 
-    def hit_rate(self,showfig=True,color='blue', legend="", figname=None):
+    def hit_rate(self,showfig=True, color='blue', legend="", figname=None):
         """Plot the hit rate of the prediction.
 
         Args:
