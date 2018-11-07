@@ -86,7 +86,7 @@ class Kernel(object):
             if not os.path.isfile(self.trainIDs):
                 raise FileNotFoundError('file %s not found' %(self.trainIDs))
 
-        if self.trainIDs is not None:
+        if self.testIDs is not None:
             if not os.path.isfile(self.testIDs):
                 raise FileNotFoundError('file %s not found' %(self.testIDs))
 
@@ -108,7 +108,7 @@ class Kernel(object):
         if self.train_archive is not None:
             tar=tarfile.open(self.train_archive)
             for member in tar.getmembers():
-                if member.name.startswith('./graph/'):
+                if '/graph/' in member.name:
                     name = member.name.split('/')[-1]
                     self.train_graphs[name] = pickle.load(tar.extractfile(member))
 

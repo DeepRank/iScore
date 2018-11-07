@@ -379,10 +379,12 @@ def iscore_svm(train=False,train_class='caseID.lst',trainID=None,testID=None,
         if trainID is None:
             tar = tarfile.open(package_name)
             members = tar.getmembers()
-            trainID = [os.path.splitext(os.path.basename(m.name))[0] for m in members if m.name.startswith('./graph/')]
+            trainID = [os.path.splitext(os.path.basename(m.name))[0] for m in members if '/graph/' in m.name]
 
         if testID is None:
             testID = [os.path.splitext(n)[0] for n in os.listdir('./graph/')]
+        else:
+            testID = [os.path.splitext(n)[0] for n in os.listdir(testID)]
 
         testdata = DataSet(trainID,Kfile,maxlen,testID=testID)
         svm = SVM(testDataSet = testdata)
