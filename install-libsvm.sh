@@ -5,6 +5,6 @@ tar -xvf v323.tar.gz
 cd libsvm-323/python
 make
 export PYTHONPATH="$PWD:$PYTHONPATH"
-cd ../../
+
 
 
