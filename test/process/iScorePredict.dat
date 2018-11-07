@@ -1,0 +1,6 @@
+Name       label      pred     decision_value
+1ACB_2w     0         0             -0.994
+1ACB_3w     1         1             0.8
+1ACB_1w     0         0             -0.1
+1ACB_4w     1         1             0.900
+1ACB_5w     0         0             -0.000
