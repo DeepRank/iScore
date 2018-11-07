@@ -79,7 +79,7 @@ class Graph(object):
         """
         data = spio.loadmat(fname,squeeze_me=True)['G']
 
-        self.name = ext = os.path.splitext(fname)[0]
+        self.name = os.path.splitext(fname)[0]
         self.nodes_pssm_data = np.array([p.tolist() for p in data['Nodes'][()]['pssm'][()]])
         self.nodes_info_data = data['Nodes'][()]['info'][()]
         self.edges_index = np.array(data['Edges'][()]['idx'][()])-1
@@ -192,9 +192,10 @@ class Graph(object):
                     else:
                         print('Warning multiple nodes with idential PSSM')
                         skip = 1
-                except:
+                except Exception as e:
                     if verbose:
-                        print('Node not found')
+                        print(e)
+
                     same = 0
             if not skip:
                 edges = tuple(e.tolist() for e in self.edges_index)
@@ -235,8 +236,6 @@ class Graph(object):
         'P' : 'PRO', 'S' : 'SER', 'T' : 'THR', 'W' : 'TRP', 'Y' : 'TYR', 'V' : 'VAL',
         'B' : 'ASX', 'U' : 'SEC', 'Z' : 'GLX'
         }
-        resmap_inv = {v: k for k, v in resmap.items()}
-
 
         self.pssm_name_dict = {}
 
@@ -256,7 +255,8 @@ class Graph(object):
                         self.pssm_name_dict[tmp]  = [self.pssm_name_dict[tmp]]
                     self.pssm_name_dict[tmp].append(res)
 
-    def read_PSSM_data(self,fname):
+    @staticmethod
+    def read_PSSM_data(fname):
         """Read the PSSM data."""
 
         f = open(fname,'r')
@@ -361,7 +361,7 @@ class GenGraph():
 
     def get_aligned_pssm(self):
         """Align the PSSM file to the pdb.
-        Untested in a while ... 
+        Untested in a while ...
         """
 
         self._align_sequences()
@@ -565,14 +565,10 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./gra
     # make sure that the dir containing the PDBs exists
     if not os.path.isdir(pdb_path):
         raise NotADirectoryError(pdb_path + ' is not a directory')
-    else:
-        pdb_files = os.listdir(pdb_path)
 
     # make sure that the dir containing the PSSMs exists
     if not os.path.isdir(pssm_path):
         raise NotADirectoryError(pssm_path + ' is not a directory')
-    else:
-        pssm_files = os.listdir(pssm_path)
 
     # create the outdir if necessary
     if not os.path.isdir(outdir):
@@ -607,7 +603,6 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./gra
 
         # mol name and base name
         mol_name = os.path.splitext(name)[0]
-        base_name = mol_name.split('_')[0]
 
         # pssms files
         pssmA = os.path.join(pssm_path,mol_name+'.A.pdb.pssm')
@@ -623,7 +618,7 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./gra
         graphfile = os.path.join(outdir+mol_name+'.pckl')
 
         # create the graphs
-        gen = GenGraph(pdbfile,pssm,aligned=aligned,outname=graphfile)
+        GenGraph(pdbfile,pssm,aligned=aligned,outname=graphfile)
 
 
 
