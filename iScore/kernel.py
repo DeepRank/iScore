@@ -211,7 +211,7 @@ class Kernel(object):
             test (bool,otional): if True only compute the first pair (no output saved)
         """
 
-        if cuda and size > 1:
+        if cuda and mpi_size > 1:
             print('MPI and CUDA implementation not supported (yet)\n CUDA disabled.')
             cuda = False
 
