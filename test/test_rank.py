@@ -31,7 +31,7 @@ class TestRank(unittest.TestCase):
                      outdir=self.train_graph)
 
         # kernel
-        if not os.path.isdir(self.train_kernel):
+        if  not os.path.isdir(self.train_kernel):
             os.mkdir(self.train_kernel)
         kfile = os.path.join(self.train_kernel,'kernel.pckl')
         iscore_kernel(train_graph=self.train_graph,
