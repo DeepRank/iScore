@@ -9,12 +9,12 @@ class DataProcess(object):
 
         Example:
 
-        >>> from iScore.plot import Plot
-        >>> p = Plot('iScorePredict.dat')
-        >>> p.plot_xxx(options)
+        >>> from iScore.process import DataProcess
+        >>> proc = DataProcess('iScorePredict.dat')
+        >>> proc.hit_rate()
 
         Args:
-            fname(str): Name of the output file of iSCore.predict
+            fname(str): Name of the output file of iScore.predict
         """
 
         self.fname = fname
