@@ -1,5 +1,4 @@
 from iScore.process import DataProcess
-import matplotlib.pyplot as plt
 import unittest
 
 class TestProcess(unittest.TestCase):

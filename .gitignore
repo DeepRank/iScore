@@ -1,0 +1,32 @@
+Byte-compiled / optimized
+*__pycache__*
+*.pyc
+
+# matlab check
+code_matlab
+
+# dist
+iScore.egg-info/
+.old/
+
+#sublime text
+*.sublime-project
+*.sublime-workspace
+
+# pickle/output files
+*.pkl
+*.pckl
+*.dat
+*.tar.gz
+
+#example
+test/kernel/graph/*
+test/rank/train/graph/*
+test/rank/train/kernel/*
+test/rank/test/graph/*
+test/rank/test/kernel/*
+example/training_set/graph/*
+example/training_set/kernel/*
+example/training_set/test/kernel/*
+example/training_set/test/graph/*
+_training_set_/*
