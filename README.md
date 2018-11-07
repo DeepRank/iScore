@@ -27,13 +27,13 @@ root/
 
 The `train` subdirectory contains the PDB files and the PSSM files of the conformation contained in the training set. The PSSM files can be calculated using PSSMGen <https://github.com/DeepRank/PSSMGen>. To train the model simply go to the `train` subdirectory and type:
 
-```
+```console
 iScore.train
 ```
 
 This binary will generate a archive file called by default `training_set.tar.gz` that contains all the information needed to predict binary classes of a test set using the trained model. To use this model go into the `test` subdirectory and type:
 
-```
+```console
 iScore.predict --archive ../train/training_set.tar.gz
 ```
 
@@ -43,7 +43,7 @@ This binary will output the binary class and decision value of the conformations
 
 MPI binaries have also been developped to facilitate the processing of large training and test dataset. These binaries can simply be used as:
 
-```
+```console
 mpiexec -n ${NPROC} iScore.train.mpi
 mpiexec -n ${NPROC} iScore.predcit.mpi
 ```
