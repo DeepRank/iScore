@@ -1,4 +1,4 @@
-from iScore.graph import Graph, iscore_graph
+from iScore.graph import iscore_graph
 from iScore.kernel import Kernel
 import numpy as np
 import unittest
