@@ -37,7 +37,7 @@ before_install:
   - pip install mpi4py
 
   # libsvm
-  -./install-libsvm.sh
+  - ./install-libsvm.sh
   #- conda install -c conda-forge libsvm
   #- sudo apt-get install python-libsvm
 
