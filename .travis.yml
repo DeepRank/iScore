@@ -37,8 +37,8 @@ before_install:
   - pip install mpi4py
 
   # libsvm
-  #- conda install -c conda-forge libsvm
-  - sudo apt-get install python-libsvm
+  - conda install -c conda-forge libsvm
+  #- sudo apt-get install python-libsvm
 
   # install pdb2sql
   - pip install numpy
