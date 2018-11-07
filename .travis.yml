@@ -45,6 +45,8 @@ before_install:
   - pip install scipy
   - pip install --index-url https://test.pypi.org/simple/ pdb2sql
 
+  # install matplotlib
+  - pip install matplotlib
 
 install:
   - pip install -qe .[test]
