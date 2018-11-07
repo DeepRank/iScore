@@ -16,7 +16,8 @@ try:
     import pycuda.autoinit
     from pycuda import driver, compiler, gpuarray, tools
     from pycuda.reduction import ReductionKernel
-except:
+
+except ModuleNotFoundError:
     print('Warning : pycuda not found')
 
 
@@ -63,7 +64,11 @@ class Kernel(object):
 
         # the cuda kernel
         self.kernel = os.path.dirname(os.path.abspath(__file__)) + '/cuda/cuda_kernel.c'
-        assert os.path.isfile(self.kernel)
+
+        # check if the kernel exists
+        if not os.path.isfile(self.kernel):
+            raise FileNotFoundError('Cuda kernel %s not found' %self.kernel)
+
 
     ##############################################################
     #
@@ -256,8 +261,8 @@ class Kernel(object):
         check_values = []
 
         # go through all the data
-        for i1,(name1,G1) in enumerate(self.test_graphs.items()):
-            for i2,(name2,G2) in enumerate(self.train_graphs.items()):
+        for (name1,G1) in self.test_graphs.items():
+            for (name2,G2) in self.train_graphs.items():
 
                 print('')
                 print(mpi_rank,name1,name2)
@@ -409,7 +414,7 @@ class Kernel(object):
             cutoff (float, optional): if px[i]<cuoff -> px[i]=0
         """
         t0 = time()
-        n1,n2 = g1.num_nodes,g2.num_nodes
+        #n1,n2 = g1.num_nodes,g2.num_nodes
         self.px = [t[0]*t[1] if (float(t[0])>cutoff or float(t[1])>cutoff) else 0 for t in itertools.product(*[g1.nodes_info_data,g2.nodes_info_data])]
         print('CPU - Px   : %f' %(time()-t0))
 
@@ -708,7 +713,7 @@ class Kernel(object):
         """
         try:
             from kernel_tuner import tune_kernel
-        except:
+        except ModuleNotFoundError :
             print('Install the Kernel Tuner : \n \t\t pip install kernel_tuner')
             print('http://benvanwerkhoven.github.io/kernel_tuner/')
 
@@ -751,7 +756,7 @@ class Kernel(object):
                 dim = (n1,n2,1)
                 args = [ind1,ind2,pssm1,pssm2,index_product,weight_product,n1,n2,g2.num_nodes]
 
-                result = tune_kernel(func,tunable_kernel,dim,args,tune_params)
+                _ = tune_kernel(func,tunable_kernel,dim,args,tune_params)
 
             if func == 'create_nodesim_mat' or test_all_func:
 
@@ -768,7 +773,7 @@ class Kernel(object):
                 dim = (g1.num_nodes,g2.num_nodes,1)
                 args = [pssm1,pssm2,w0,g1.num_nodes,g2.num_nodes]
 
-                result = tune_kernel(func,tunable_kernel,dim,args,tune_params)
+                _ = tune_kernel(func,tunable_kernel,dim,args,tune_params)
 
             if func == 'create_p_vect' or test_all_func:
 
@@ -785,7 +790,7 @@ class Kernel(object):
                 dim = (g1.num_nodes,g2.num_nodes,1)
                 args = [info1,info2,pvect,g1.num_nodes,g2.num_nodes]
 
-                result = tune_kernel(func,tunable_kernel,dim,args,tune_params)
+                _ = tune_kernel(func,tunable_kernel,dim,args,tune_params)
 
         except:
             print('Function %s not found in %s' %(func,self.kernel))
