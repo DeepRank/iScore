@@ -20,7 +20,8 @@ class DataProcess(object):
         self.fname = fname
         self.data = self._read_data(fname)
 
-    def _read_data(self,fname):
+    @staticmethod
+    def _read_data(fname):
         """Read the data stored in the output file of iScore.predict.
 
         Args:
@@ -62,7 +63,7 @@ class DataProcess(object):
 
             try:
                 index = self.data['ID'].index(ID)
-                self.data['label'] = label
+                self.data['label'][index] = label
 
             except:
                 raise ValueError("ID %s not found in data" %ID)
@@ -88,7 +89,7 @@ class DataProcess(object):
         label = np.array(self.data["label"])[indexsort][::-1]
         print(label)
         hit = np.cumsum(label)
-        fig,ax = plt.subplots()
+        fig,_ = plt.subplots()
         plt.plot(hit,c=color,label=legend)
 
         if figname is not None:
