@@ -37,7 +37,7 @@ __global__ void create_kron_mat( int *edges_index_1, int *edges_index_2,
 
 	int tx = threadIdx.x + blockDim.x * blockIdx.x;
 	int ty = threadIdx.y + blockDim.y * blockIdx.y;
-	int ind=0,len = 40;
+	int ind=0, len = 40;
 	float w;
 	int invert;
 
@@ -57,8 +57,8 @@ __global__ void create_kron_mat( int *edges_index_1, int *edges_index_2,
 
 		// store it
 		edges_weight_product[ind]       = w;
-		edges_index_product[2*ind]      = edges_index_1[tx]   * n_nodes_2   + edges_index_2[ty] ;
-		edges_index_product[2*ind + 1]  = edges_index_1[n_edges_1 + tx] * n_nodes_2   + edges_index_2[n_edges_2+ ty] ;
+		edges_index_product[2*ind]      = edges_index_1[2*tx] * n_nodes_2 + edges_index_2[2*ty] ;
+		edges_index_product[2*ind + 1]  = edges_index_1[2*tx+1] * n_nodes_2   + edges_index_2[2*ty+1] ;
 
 		////////////////////////////////////
 		// second pass
@@ -74,8 +74,8 @@ __global__ void create_kron_mat( int *edges_index_1, int *edges_index_2,
 
 		// store it
 		edges_weight_product[ind]       = w;
-		edges_index_product[2*ind]      = edges_index_1[n_edges_1 + tx]   * n_nodes_2   + edges_index_2[ty];
-		edges_index_product[2*ind + 1]  = edges_index_1[tx]     * n_nodes_2   + edges_index_2[n_edges_2 + ty];
+		edges_index_product[2*ind]      = edges_index_1[2*tx+1]   * n_nodes_2   + edges_index_2[2*ty];
+		edges_index_product[2*ind + 1]  = edges_index_1[2*tx]     * n_nodes_2   + edges_index_2[2*ty+1];
 
 	}
 }
