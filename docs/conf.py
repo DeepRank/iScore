@@ -27,7 +27,10 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
             return MagicMock()
 
-MOCK_MODULES = ['numpy', 'scipy','h5py','scipy.sparse','scipy.io','matplotlib.pyplot','tqdm']
+MOCK_MODULES = ['numpy', 'scipy','h5py','scipy.sparse',
+                'scipy.io','matplotlib.pyplot','tqdm',
+                'Bio','pickle','pdb2sql','pycuda','tarfiles',
+                'itertools','collections','svmutil']
 
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 sys.path.insert(0, os.path.abspath('../'))
