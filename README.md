@@ -50,4 +50,4 @@ mpiexec -n ${NPROC} iScore.predcit.mpi
 
 ## Graph Kernel on GPUs
 
-CUDA enables routines have been implemented to accelerate the calculation og the graph kernels using GPUs. This feature os not accessible directly via the `iScore.train` and `iScore.predict` binaries but can only be used through lower-level binaries shipped by iScore. Go to the official iScore documentaion to learn how to access these features <https://iscoredoc/readthedocs.io/en/latest/>
+CUDA enables routines have been implemented to accelerate the calculation og the graph kernels using GPUs. This feature os not accessible directly via the `iScore.train` and `iScore.predict` binaries but can only be used through lower-level binaries shipped by iScore. Go to the official iScore documentaion to learn how to access these features <https://iscoredoc.readthedocs.io/en/latest/gpu.html>
