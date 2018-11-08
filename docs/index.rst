@@ -11,8 +11,10 @@ Welcome to iScore's documentation!
    :caption: Contents:
 
    intro
+   quick
    pssm
    graph
+   gpu
    svm
    workflow
    doc

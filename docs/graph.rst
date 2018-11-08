@@ -1,4 +1,4 @@
-Graphs and Kernels :
+Graphs and Kernels
 ===============================
 
 

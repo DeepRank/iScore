@@ -1,14 +1,16 @@
 .. highlight:: rst
 
+Introduction
+=============================
 
-Using Support Vector Machine on Graph Kernels for protein-protein interface scoring
+**Support Vector Machine on Graph Kernels for Protein-Protein Docking Scoring**
 
 iScore uses support vector machine to classify protein-protein interfaces in enar natives and non-near natives. To this purpose, each interface is encoded in a graph where each node corresponds to the Position Specific Similarity Matrix (PSSM) of a given residue. The nodes can be connected if they participate in a contact between the two different proteins.
 
 The graph of a given conformation is then used to computeits kernel with a training set of carefully chosen conforations representing near native and decoys. A support vector machine is then adopted to predict if the conformation under scrutiny is near native or not.
 
 Installation
-=============================
+-------------------------------
 
 The code is hosted on Github_ (https://github.com/DeepRank/iScore)
 
