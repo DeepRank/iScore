@@ -1,7 +1,7 @@
 import os
-from iScore.graph import iscore_graph
-from iScore.kernel import iscore_kernel
-from iScore.rank import iscore_svm
+from iScore.graphrank.graph import iscore_graph
+from iScore.graphrank.kernel import iscore_kernel
+from iScore.graphrank.rank import iscore_svm
 import unittest
 
 class TestRank(unittest.TestCase):

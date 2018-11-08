@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os
-from iScore.rank import iscore_svm
+from iScore.graphrank.rank import iscore_svm
 import argparse
 
 

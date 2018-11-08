@@ -1,4 +1,4 @@
-from iScore.graph import GenGraph, Graph
+from iScore.graphrank.graph import GenGraph, Graph
 import unittest
 
 class TestGraph(unittest.TestCase):

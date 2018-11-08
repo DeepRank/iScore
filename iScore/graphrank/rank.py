@@ -1,7 +1,7 @@
 import sys, os
 import numpy as np
 
-from iScore.graph import Graph
+from iScore.graphrank.graph import Graph
 import pickle
 import tarfile
 

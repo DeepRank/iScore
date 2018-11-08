@@ -1,5 +1,5 @@
-from iScore.graph import iscore_graph
-from iScore.kernel import Kernel
+from iScore.graphrank.graph import iscore_graph
+from iScore.graphrank.kernel import Kernel
 import numpy as np
 import unittest
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import os
 import argparse
-from iScore.graph import iscore_graph
-from iScore.kernel import iscore_kernel
-from iScore.rank import iscore_svm
+from iScore.graphrank.graph import iscore_graph
+from iScore.graphrank.kernel import iscore_kernel
+from iScore.graphrank.rank import iscore_svm
 
 
 ##########################################################################

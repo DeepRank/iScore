@@ -1,4 +1,4 @@
-from iScore.process import DataProcess
+from iScore.graphrank.process import DataProcess
 import unittest
 
 class TestProcess(unittest.TestCase):

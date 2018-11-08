@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import os
 import argparse
-from iScore.graph import iscore_graph_mpi
-from iScore.kernel import iscore_kernel_mpi
-from iScore.rank import iscore_svm
+from iScore.graphrank.graph import iscore_graph_mpi
+from iScore.graphrank.kernel import iscore_kernel_mpi
+from iScore.graphrank.rank import iscore_svm
 from mpi4py import MPI
 
 

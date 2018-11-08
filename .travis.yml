@@ -38,7 +38,7 @@ before_install:
 
   # libsvm
   - bash install-libsvm.sh
-  - export PYTHONPATH="$PYTHONPATH:$PWD/libsvm-323/python"
+  - export PYTHONPATH="$PYTHONPATH:$PWD/libsvm-323/python
   #- conda install -c conda-forge libsvm
   #- sudo apt-get install python-libsvm
 
