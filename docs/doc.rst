@@ -16,8 +16,6 @@ Graph
 .. automodule:: iScore.graph
     :members:
     :undoc-members:
-    :show-inheritance:
-
 
 Kernel
 ----------------------------------------
@@ -25,8 +23,6 @@ Kernel
 .. automodule:: iScore.kernel
     :members:
     :undoc-members:
-    :show-inheritance:
-
 
 
 SVM
@@ -35,4 +31,3 @@ SVM
 .. automodule:: iScore.rank
     :members:
     :undoc-members:
-    :show-inheritance:
