@@ -45,7 +45,9 @@ before_install:
   # install pdb2sql
   - pip install numpy
   - pip install scipy
-  - pip install --index-url https://test.pypi.org/simple/ pdb2sql
+  - sudo apt-get install git-all
+  - bash install_pdb2sql.sh
+  #- pip install --index-url https://test.pypi.org/simple/ pdb2sql
 
   # install matplotlib
   - pip install matplotlib
