@@ -314,7 +314,7 @@ class SVM(object):
             score (TYPE): iScore
         """
         f = open(fname,'w')
-        f.write('{:10} {:>5}     {:>5}     {:>14}\n'.format('Name','label','pred','decision_value'))
+        f.write('{:10} {:>5}     {:>5}     {:>14}\n'.format('#Name','label','pred','decision_value'))
         for i,n in enumerate(name):
             if label[i] is None:
                 st = "{:10} {:>5}     {:5}     {: 14.3f}\n"
@@ -328,7 +328,7 @@ class SVM(object):
 def iscore_svm(train=False,train_class='caseID.lst',trainID=None,testID=None,
                 kernel='./kernel/',save_model='svm_model.pkl',load_model=None,
                 package_model=False,package_name=None,graph='./graph/',
-                include_kernel=False, maxlen = None,score_file='iScorePredict'):
+                include_kernel=False, maxlen = None,score_file='GraphRank'):
     """Function called in the binary iScore.predict and iScore.train
 
     Args:

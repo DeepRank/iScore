@@ -2,7 +2,7 @@ import os
 import numpy as np
 from pdb2sql.pdb2sqlcore import pdb2sql
 
-class EnergeticTerms(object):
+class InternalEnergy(object):
 
     def __init__(self,pdbfile,
                  param_charge=None,param_vdw=None,patch_file=None,
@@ -924,6 +924,7 @@ class EnergeticTerms(object):
         pref[r>r_off] = 0.
         pref[r<r_on]  = 1.0
         return pref
+
 
 if __name__ == "__main__":
 

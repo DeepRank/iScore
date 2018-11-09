@@ -5,6 +5,8 @@ import argparse
 from iScore.graphrank.graph import iscore_graph
 from iScore.graphrank.kernel import iscore_kernel
 from iScore.graphrank.rank import iscore_svm
+#from iScore.energetic.energy import iscore_energy
+from iScore.function.score import iscore
 
 ##########################################################################
 # Predict the class of the graphs located by default in ./graph
@@ -23,15 +25,16 @@ parser.add_argument('--graph',default='./graph/',type=str,help='Graph pickle fil
 # archive model to use
 parser.add_argument('--archive',default='training_set.tar.gz',help='model archive we want to use')
 
+# archive model to use
+parser.add_argument('--energy',default='haddock',help='energy terms : None or haddock(default)')
+
 # get the args
 args = parser.parse_args()
-
 
 # create the graphs
 if not os.path.isdir(args.graph):
 	os.mkdir(args.graph)
 iscore_graph(outdir=args.graph)
-
 
 # compute the kernels
 if not os.path.isdir(args.kernel):
@@ -39,8 +42,14 @@ if not os.path.isdir(args.kernel):
 kfile = os.path.join(args.kernel,'kernel.pckl')
 iscore_kernel(test_graph=args.graph,train_archive=args.archive,outfile=kfile)
 
-
-# predcit the classes
+# grahrank score
 iscore_svm(load_model=None,package_name=args.archive)
+
+# add energy terms
+# iscore_energy(method=args.energy)
+
+# # final energy function
+# iscore()
+
 
 
