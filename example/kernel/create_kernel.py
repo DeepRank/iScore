@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from iScore.graph import Graph, iscore_graph
-from iScore.kernel import Kernel
+from iScore.graphrank.graph import Graph, iscore_graph
+from iScore.graphrank.kernel import Kernel
 
 # create all the graphs of the pdb in ./pdb/
 iscore_graph()

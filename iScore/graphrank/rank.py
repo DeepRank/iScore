@@ -173,8 +173,12 @@ class SVM(object):
             raise ValueError('You should specify a trainDataSet')
 
         print('Training Model')
-        prob = svm_problem(self.trainDataSet.train_class,self.trainDataSet.Kmat)
-        param = svm_parameter('-c 4')
+        kdata = []
+        for i,k in enumerate(self.trainDataSet.Kmat):
+            kdata.append([i+1]+k)
+
+        prob = svm_problem(self.trainDataSet.train_class,kdata,isKernel=True)
+        param = svm_parameter('-t 4 -c 4 -b 1')
         self.model = svm_train(prob,param)
         self.mode_file_name = model_file_name
 

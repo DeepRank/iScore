@@ -587,7 +587,13 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./gra
     # get the list of PDB names
     pdbs = list(filter(lambda x: x.endswith('.pdb'),os.listdir(pdb_path)))
     if select is not None:
-        pdbs = list(filter(lambda x: x.startswith(select),pdbs))
+        _tmp = []
+        for s in select:
+            s = s.strip('\n')
+            for p in pdbs:
+                if p.split('.')[0] == s:
+                    _tmp.append(p)
+        pdbs = _tmp
 
     # create the output file
     if not os.path.isdir(outdir):

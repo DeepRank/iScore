@@ -237,6 +237,10 @@ class Kernel(object):
 
         # check file if it exists
         if check is not None:
+
+            if not os.path.isfile(check):
+                raise FileNotFoundError(check)
+
             data = spio.loadmat(check,squeeze_me=True)
             Kcheck = data['K']
 
