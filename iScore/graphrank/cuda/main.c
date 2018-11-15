@@ -3,6 +3,13 @@
 #include <stdio.h>
 #include <sys/time.h>
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/betweenness_centrality.hpp>
+#include <boost/graph/random.hpp>
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics.hpp>
+#include <random>
+
 #define CHECK(call)\
 {\
     const cudaError_t error = call;\
@@ -14,6 +21,13 @@
     }\
 }\
 
+
+
+void  create_graph(int *edges_index, float *nodes_data)
+{
+
+
+}
 
 int main(int argc, char **argv)
 {

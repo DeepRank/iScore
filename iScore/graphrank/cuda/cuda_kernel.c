@@ -1,5 +1,5 @@
 #include <math.h>
-
+#include <cuda_runtime.h>
 // the rbf kernel function
 __host__ __device__ float rbf_kernel(int tx, int ty, float *a, float *b, int len, int invert)
 {
