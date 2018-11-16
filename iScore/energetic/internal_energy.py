@@ -84,7 +84,7 @@ class InternalEnergy(object):
         self.assign_parameters()
 
         # only compute the pair interactions here
-        self.evdw, self.ec = self.evaluate_pair_interaction(print_interactions=False)
+        self.evdw, self.ec = self.evaluate_pair_interaction(print_interactions=verbose)
 
         # compute the charges
         # here we extand the contact atoms to
@@ -744,175 +744,6 @@ class InternalEnergy(object):
 
 
 
-    #####################################################################################
-    #
-    #   ELECTROSTATIC
-    #
-    #####################################################################################
-
-    def compute_coulomb_interchain_only(self,dosum=True,contact_only=False):
-        """Compute the coulomb interactions between the chains only.
-
-        Args:
-            dosum (bool, optional): sum the interaction terms for each atoms
-            contact_only (bool, optional): consider only contact atoms
-        """
-
-        if self.verbose:
-            print('-- Compute coulomb energy interchain only')
-
-        if contact_only:
-
-            if len(self.contact_atoms_A) == 0:
-                self.feature_data['coulomb'] = {}
-                self.export_directories['coulomb'] = self.root_export+'/ELEC/'
-                return
-
-            xyzA = np.array(self.sqldb.get('x,y,z',rowID=self.contact_atoms_A))
-            xyzB = np.array(self.sqldb.get('x,y,z',rowID=self.contact_atoms_B))
-
-            chargeA = np.array(self.sqldb.get('CHARGE',rowID=self.contact_atoms_A))
-            chargeB = np.array(self.sqldb.get('CHARGE',rowID=self.contact_atoms_B))
-
-            atinfoA = self.sqldb.get('chainID,resName,resSeq,name',rowID=self.contact_atoms_A)
-            atinfoB = self.sqldb.get('chainID,resName,resSeq,name',rowID=self.contact_atoms_B)
-
-        else:
-
-            xyzA = np.array(self.sqldb.get('x,y,z',chainID='A'))
-            xyzB = np.array(self.sqldb.get('x,y,z',chainID='B'))
-
-            chargeA = np.array(self.sqldb.get('CHARGE',chainID='A'))
-            chargeB = np.array(self.sqldb.get('CHARGE',chainID='B'))
-
-            atinfoA = self.sqldb.get('chainID,resName,resSeq,name',chainID='A')
-            atinfoB = self.sqldb.get('chainID,resName,resSeq,name',chainID='B')
-
-        natA,natB = len(xyzA),len(xyzB)
-        matrix = np.zeros((natA,natB))
-
-        electro_data  = {}
-
-        for iat in range(natA):
-
-            # coulomb terms
-            r = np.sqrt(np.sum((xyzB-xyzA[iat,:])**2,1))
-            r[r==0]  = 3.0
-            q1q2 = chargeA[iat]*chargeB
-            value = q1q2/r
-
-            # store amd symmtrized these values
-            matrix[iat,:] = value
-
-            # atinfo
-            key = tuple(atinfoA[iat])
-
-            # store
-            if dosum:
-                value = [np.sum(value)]
-            electro_data[key] = value
-
-        for iat in range(natB):
-
-
-            # atinfo
-            key = tuple(atinfoB[iat])
-
-            # store
-            value = matrix[:,iat]
-            if dosum:
-                value = [np.sum(value)]
-            electro_data[key] = value
-
-
-    #####################################################################################
-    #
-    #   VAN DER WAALS
-    #
-    #####################################################################################
-
-
-    def compute_vdw_interchain_only(self,dosum=True,contact_only=False):
-        """Compute the vdw interactions between the chains only.
-
-        Args:
-            dosum (bool, optional): sum the interaction terms for each atoms
-            contact_only (bool, optional): consider only contact atoms
-        """
-        if self.verbose:
-            print('-- Compute vdw energy interchain only')
-
-        if contact_only:
-
-            if len(self.contact_atoms_A) == 0:
-                self.feature_data['coulomb'] = {}
-                self.export_directories['coulomb'] = self.root_export+'/ELEC/'
-                return
-
-
-            xyzA = np.array(self.sqldb.get('x,y,z',rowID=self.contact_atoms_A))
-            xyzB = np.array(self.sqldb.get('x,y,z',rowID=self.contact_atoms_B))
-
-            vdwA = np.array(self.sqldb.get('eps,sig',rowID=self.contact_atoms_A))
-            vdwB = np.array(self.sqldb.get('eps,sig',rowID=self.contact_atoms_B))
-
-            epsA,sigA = vdwA[:,0],vdwA[:,1]
-            epsB,sigB = vdwB[:,0],vdwB[:,1]
-
-            atinfoA = self.sqldb.get('chainID,resName,resSeq,name',rowID=self.contact_atoms_A)
-            atinfoB = self.sqldb.get('chainID,resName,resSeq,name',rowID=self.contact_atoms_B)
-
-        else:
-
-            xyzA = np.array(self.sqldb.get('x,y,z',chainID='A'))
-            xyzB = np.array(self.sqldb.get('x,y,z',chainID='B'))
-
-            vdwA = np.array(self.sqldb.get('eps,sig',chainID='A'))
-            vdwB = np.array(self.sqldb.get('eps,sig',chainID='B'))
-
-            epsA,sigA = vdwA[:,0],vdwA[:,1]
-            epsB,sigB = vdwB[:,0],vdwB[:,1]
-
-            atinfoA = self.sqldb.get('chainID,resName,resSeq,name',chainID='A')
-            atinfoB = self.sqldb.get('chainID,resName,resSeq,name',chainID='B')
-
-        natA,natB = len(xyzA),len(xyzB)
-        matrix = np.zeros((natA,natB))
-
-        vdw_data  = {}
-
-        for iat in range(natA):
-
-            # vdW terms
-            r = np.sqrt(np.sum((xyzB-xyzA[iat,:])**2,1))
-            r[r==0]  = 3.0
-            sigma = 0.5*(sigA[iat] + sigB)
-            eps = np.sqrt(epsA[iat]*epsB)
-
-            # normal LJ potential
-            value = 4*eps * (  (sigma/r)**12  - (sigma/r)**6 )
-
-            # store these values
-            matrix[iat,:] = value
-
-            # atinfo
-            key = tuple(atinfoA[iat])
-
-            # store
-            if dosum:
-                value = [np.sum(value)]
-            vdw_data[key] = value
-
-        for iat in range(natB):
-
-            # atinfo
-            key = tuple(atinfoB[iat])
-
-            # store
-            value = matrix[:,iat]
-            if dosum:
-                value = [np.sum(value)]
-            vdw_data[key] = value
 
     @staticmethod
     def _prefactor_vdw(r):
@@ -929,4 +760,4 @@ class InternalEnergy(object):
 if __name__ == "__main__":
 
     pdb = '../../test/graph/1ATN.pdb'
-    E = EnergeticTerms(pdb)
+    E = EnergeticTerms(pdb,verbose = True)

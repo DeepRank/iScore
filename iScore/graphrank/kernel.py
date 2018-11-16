@@ -63,7 +63,7 @@ class Kernel(object):
         self.train_archive=train_archive
 
         # the cuda kernel
-        self.kernel = os.path.dirname(os.path.abspath(__file__)) + '/cuda/cuda_kernel.c'
+        self.kernel = os.path.dirname(os.path.abspath(__file__)) + '/cuda/cuda_kernel.cu'
 
         # check if the kernel exists
         if not os.path.isfile(self.kernel):
