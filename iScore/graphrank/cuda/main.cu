@@ -17,12 +17,10 @@
 #include <random>
 
 
+#include "kernel.hpp"
 
-__global__ void create_kron_mat( int *edges_index_1, int *edges_index_2, 
-                                 float *edges_pssm_1, float *edges_pssm_2, 
-                                 int *edges_index_product, float *edges_weight_product,
-                                 int n_edges_1, int n_edges_2,
-                                 int n_nodes_2);
+
+
 
 #define LEN 20
 #define LEN2 2*LEN
@@ -73,7 +71,11 @@ Graph create_graph(int num_node, int num_edge, RNGType rng)
     return g;
 }
 
-
+void create_node_data(std::vector<float> &node_info, int num_node)
+{
+    for (int i=0; i < num_node; i++)
+        node_info[i] = rand() % 1; 
+}
 
 void extract_graph_data(std::vector<int> &edge_index, std::vector<float> &pssm, Graph g)
 {
@@ -104,9 +106,8 @@ double cpuSecond()
 
 int main(int argc, char **argv)
 {
-
-    int dimx = 8;
-    int dimy = 8;
+    bool __print_device__ = false;
+    int dimx = 8, dimy = 8;
     if (argc > 2)
     {
         dimx = atoi(argv[1]);
@@ -121,6 +122,14 @@ int main(int argc, char **argv)
     struct cudaDeviceProp deviceProp;
     CHECK(cudaGetDeviceProperties(&deviceProp,dev));
     printf("Using device %d : %s\n", dev, deviceProp.name);
+    if (__print_device__)
+    {
+        printf("Number of multiprocessor %d\n",deviceProp.multiProcessorCount);
+        printf("Total amount of constant memory: %4.2f KB\n",deviceProp.totalConstMem/1024.0);
+        printf("Total amount of shared memory per block: %4.2f KB\n",deviceProp.sharedMemPerBlock/1024.0);
+        printf("Wrap size: %d\n", deviceProp.warpSize);
+        printf("Maximum number of thread per block: %d\n", deviceProp.maxThreadsPerBlock);
+    }
     CHECK(cudaSetDevice(dev));
 
     // generate random graphs
@@ -130,8 +139,8 @@ int main(int argc, char **argv)
     //boost::print_graph(g1);
 
     // generatee random graphs
-    int num_node_2 = 100;
-    int num_edge_2 = 1000;
+    int num_node_2 = 200;
+    int num_edge_2 = 2000;
     Graph g2 = create_graph(num_node_2,num_edge_2,rng);
     //boost::print_graph(g2);
     
@@ -182,7 +191,9 @@ int main(int argc, char **argv)
 
     //set up the grid
     dim3 block(dimx,dimy);
-    dim3 grid( (num_edge_1+block.x-1)/block.x, (num_edge_2+block.y-1)/block.y );    
+    dim3 grid( (num_edge_1+block.x-1)/block.x, (num_edge_2+block.y-1)/block.y );  
+
+    // comoute the kronecker matrix  
     double iStart = cpuSecond();
     create_kron_mat<<< grid, block >>>(d_edge_index_1,d_edge_index_2, \
                                        d_edge_pssm_1, d_edge_pssm_2,  \
@@ -193,11 +204,51 @@ int main(int argc, char **argv)
     printf("Kron_Mat <<< (%d,%d), (%d,%d) >>> : %f sec.\n", \
             grid.x, grid.y, block.x, block.y, iElaps);
 
+
+
+    // create node data for testing px
+    std::vector<float> node_data_1(num_node_1);
+    std::vector<float> node_data_2(num_node_2);
+    std::vector<float> pvect(num_node_1,num_node_2);
+    create_node_data(node_data_1,num_node_1);
+    create_node_data(node_data_2,num_node_2);
+
+    // node data on the PGU
+    float *d_node_data_1;
+    size_t nBytes_node1 = num_node_1 * sizeof(float);
+    cudaMalloc((void**)&d_node_data_1,nBytes_node1);
+    cudaMemcpy(d_node_data_1, node_data_1.data(), nBytes_node1, cudaMemcpyHostToDevice);
+
+    // node data on the PGU
+    float *d_node_data_2;
+    size_t nBytes_node2 = num_node_2 * sizeof(float);
+    cudaMalloc((void**)&d_node_data_2,nBytes_node2);
+    cudaMemcpy(d_node_data_2, node_data_2.data(), nBytes_node2, cudaMemcpyHostToDevice);
+
+    float *d_pvect;
+    size_t nBytes_pvect = num_node_1*num_node_2;
+    cudaMalloc((void**)&d_pvect,nBytes_pvect);
+
+
+    iStart = cpuSecond();
+    create_p_vect<<< grid, block >>>(d_node_data_1, d_node_data_2, d_pvect, num_node_1, num_node_2);
+    cudaDeviceSynchronize();
+    iElaps = cpuSecond() - iStart;
+    printf("create_pvect <<< (%d,%d), (%d,%d) >>> : %f sec.\n", \
+            grid.x, grid.y, block.x, block.y, iElaps);
+
     cudaFree(d_edge_index_1);
     cudaFree(d_edge_pssm_1);
     cudaFree(d_edge_index_2);
     cudaFree(d_edge_pssm_2);
     cudaFree(d_edge_index_prod);
     cudaFree(d_edge_weight_prod);
+
+    cudaFree(d_node_data_1);
+    cudaFree(d_node_data_2);
+    cudaFree(d_pvect);
+
+    cudaDeviceReset();
+    return 0;
 
 }
