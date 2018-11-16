@@ -42,9 +42,3 @@ class HaddockEnergy(object):
             return None
         else:
             return all_lines
-
-if __name__ == '__main__':
-    pdb = '../../example/training_set/test/pdb/1ACB_1w.pdb'
-    pdb_fail = '../../test/rank/train/pdb/2I25.pdb'
-    e = HaddockEnergy(pdb_fail)
-    e.read_energies()
