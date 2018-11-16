@@ -569,7 +569,7 @@ class Kernel(object):
     #
     ##############################################################
 
-    def compile_kernel(self):
+    def compile_kernel(self): # pragma: no cover
         """Compile the file containing the CUDA kernels."""
 
         t0 = time()
@@ -577,7 +577,7 @@ class Kernel(object):
         self.mod = compiler.SourceModule(kernel_code)
         print('GPU - Kern : %f' %(time()-t0))
 
-    def compute_kron_mat_cuda(self,g1,g2,gpu_block=None):
+    def compute_kron_mat_cuda(self,g1,g2,gpu_block=None): # pragma: no cover
         """kronecker matrix with the edges pssm
 
         Args:
@@ -649,7 +649,7 @@ class Kernel(object):
         #driver.Context.synchronize()
         print('GPU - Kron : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
 
-    def compute_px_cuda(self,g1,g2,gpu_block=None):
+    def compute_px_cuda(self,g1,g2,gpu_block=None): # pragma: no cover
         """Calculation of the PX vector.
 
         Args:
@@ -679,7 +679,7 @@ class Kernel(object):
         driver.Context.synchronize()
         print('GPU - Px   : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
 
-    def compute_W0_cuda(self,g1,g2,gpu_block=None):
+    def compute_W0_cuda(self,g1,g2,gpu_block=None): # pragma: no cover
         """Calculation of the W0 matrix from the nodes pssm.
 
         Args:
@@ -708,7 +708,7 @@ class Kernel(object):
         driver.Context.synchronize()
         print('GPU - W0   : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
 
-    def tune_kernel(self,func='create_kron_mat',test_all_func=False):
+    def tune_kernel(self,func='create_kron_mat',test_all_func=False): # pragma: no cover
         """Method to tune the kernel using the KernelTuner
 
         Args:
@@ -800,7 +800,7 @@ class Kernel(object):
             print('Function %s not found in %s' %(func,self.kernel))
 
     @staticmethod
-    def _tunable_kernel(kernel):
+    def _tunable_kernel(kernel): # pragma: no cover
         """Transform the kernel to a tunable one.
 
         Args:
