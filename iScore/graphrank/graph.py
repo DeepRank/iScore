@@ -133,7 +133,7 @@ class Graph(object):
         pickle.dump(self,f)
         f.close()
 
-    def print(self):
+    def print(self): #pragma: no cover
         """Print the graph to screen for debugging."""
 
         print('='*40)
@@ -167,11 +167,11 @@ class Graph(object):
         same = 1
 
         if self.num_nodes != gcheck.num_nodes:
-            if verbose:
+            if verbose: #pragma: no cover
                 print('Graphs %s and %s have different number of nodes' %(self.name,gcheck.name))
             same = 0
         if self.num_edges != gcheck.num_edges:
-            if verbose:
+            if verbose: #pragma: no cover
                 print('Graphs %s and %s have different number of edges' %(self.name,gcheck.name))
             same = 0
 
