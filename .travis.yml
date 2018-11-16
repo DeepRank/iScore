@@ -58,8 +58,10 @@ install:
 script:
   - cd test/
   - pytest --cov=iScore --cov-report xml:coverage.xml
-  - mv coverage.xml ../
-  - mv .coverage ../
+  - mv coverage.xml .coverage ../test_mpi
+  - cd ../test_mpi
+  - mpiexec -n 1 pytest --cov=iScore --cov-report xml:coverage.xml --cov-append
+  - mv coverage.xml .coverage ../
   - cd ../
 
 after_script:
