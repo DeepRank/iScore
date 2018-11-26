@@ -2,6 +2,7 @@ import os
 import numpy as np
 import scipy.io as spio
 import pickle
+import h5py
 from pdb2sql.pdb2sqlcore import pdb2sql
 from pdb2sql.interface import interface
 from Bio import pairwise2
@@ -270,7 +271,8 @@ class Graph(object):
 
 class GenGraph():
 
-    def __init__(self,pdbfile,pssmfile,aligned=True,export=True,outname=None,cutoff=6.0):
+    def __init__(self,pdbfile,pssmfile, aligned=True, export=True,
+                 outname=None, cutoff=6.0, h5file = None):
         """Generates a graph from pdb and pssm files.
 
         Example:
@@ -290,6 +292,7 @@ class GenGraph():
             export (bool, optional): Export graph files
             outname (None, optional): Directory containing all the exported graphs
             cutoff (float, optional): Cutoff distance to select contact atoms
+            h5file (file handle, optional): hdf5 file handle to store the graph (None if no export)
         """
 
         # pdb file
@@ -333,6 +336,8 @@ class GenGraph():
         if export:
             self.export_graph(outname)
 
+        if h5file is not None:
+            self.toh5(h5file)
 
     def check_pssm_format(self,aligned):
         """Check the format of the PSSM files
@@ -547,7 +552,22 @@ class GenGraph():
         graph.pickle(fname)
 
 
-def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./graph/',aligned=True):
+    def toh5(self,f5):
+        """Export the graph into an exisiting and open HDF5 file.
+
+        Args:
+            f5 (file handle): handle o the hdf5 file
+        """
+
+        grp_name = os.path.splitext(os.path.basename(self.pdbfile))[0]
+        grp = f5.create_group(grp_name)
+        grp.attrs['pdbfile'] = os.path.abspath(self.pdbfile)
+        grp.create_dataset('nodes',data = np.array(self.nodes).astype('S'))
+        grp.create_dataset('edges',data = np.array(self.edges))
+
+
+def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
+                 outdir='./graph/',aligned=True, export_hdf5=True):
     """Function called in the binary iScore.graph
 
     Args:
@@ -556,6 +576,7 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./gra
         select (None, optional): file containign the ID of the desired pdb. If None all PDBs are processed
         outdir (str, optional): Directory where to store the data
         aligned (bool, optional): Are the PSSM aligned
+        export_hdf5(bool, optional): export the graph information to a single hdf5 file
 
     Raises:
         FileNotFoundError: If select has been specified but does not correspond to an existing file
@@ -623,13 +644,23 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,outdir='./gra
         # output file
         graphfile = os.path.join(outdir+mol_name+'.pckl')
 
+        if export_hdf5:
+            h5name = './graphs.hdf5'
+            f5 = h5py.File(h5name,'a')
+        else:
+            f5 = None
+
         # create the graphs
-        GenGraph(pdbfile,pssm,aligned=aligned,outname=graphfile)
+        GenGraph(pdbfile,pssm,aligned=aligned,outname=graphfile,export=True,h5file=f5)
+
+        if export_hdf5:
+            f5.close()
 
 
 
 def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
-                     outdir='./graph/',aligned=True,rank=0,size=1,mpi_comm=None):
+                     outdir='./graph/',aligned=True, export_hdf5=True,
+                     rank=0,size=1,mpi_comm=None):
     """Function called in the binary iScore.graph.mpi
 
     Args:
@@ -638,6 +669,7 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
         select (None, optional): file containign the ID of the desired pdb. If None all PDBs are processed
         outdir (str, optional): Directory where to store the data
         aligned (bool, optional): Are the PSSM aligned
+        export_hdf5(bool, optional): export the graph information to a single hdf5 file
 
     Raises:
         FileNotFoundError: If select has been specified but does not correspond to an existing file
@@ -718,5 +750,14 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
         # output file
         graphfile = os.path.join(outdir+mol_name+'.pckl')
 
+        if export_hdf5:
+            h5name = 'graphs_%d.hdf5' %rank
+            f5 = h5py.File(h5name,'w')
+        else:
+            f5 = None
+
         # create the graphs
-        gen = GenGraph(pdbfile,pssm,aligned=aligned,outname=graphfile)
+        gen = GenGraph(pdbfile,pssm,aligned=aligned,outname=graphfile,h5file=f5)
+
+        if export_hdf5:
+            f5.close()
