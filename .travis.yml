@@ -33,7 +33,7 @@ before_install:
   - conda install -c anaconda biopython
 
   # install mpi4py
-  - sudo apt-get install libopenmpi-dev
+  - sudo apt-get install libopenmpi-dev openmpi-bin
   - pip install mpi4py
 
   # libsvm
