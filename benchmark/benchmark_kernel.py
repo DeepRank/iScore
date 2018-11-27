@@ -2,7 +2,7 @@ from iScore.graphrank.graph import Graph
 from iScore.graphrank.kernel import Kernel
 import networkx as nx
 from networkx.algorithms import bipartite
-
+import matplotlib.pyplot as plt
 try:
     import pycuda.autoinit
     from pycuda import driver, compiler, gpuarray, tools
@@ -21,58 +21,99 @@ def generate_graph(name,num_nodes,edge_proba):
     info = np.random.rand(np.sum(num_nodes))
     return Graph(name=name,nodes_pssm=pssm,nodes_info=info,edges_index=edges)
 
-def test_cpu(G1,G2,lamb=1, walk=4, method='vect'):
+def time_kmat_cpu(G1,G2,lamb=1, walk=4, method='vect'):
 
     #kernel routine
     ker = Kernel()
     t0 = time()
-
     ker.compute_kron_mat(G1,G2)
-    ker.compute_px(G1,G2)
-    ker.compute_W0(G1,G2)
+    return time() - t0
 
-    # compute the graphs
-    ker.compute_K(lamb=lamb,walk=walk)
-    print("Total time : %f\n" %(time()-t0))
-
-def test_gpu(G1,G2,lamb=1, walk=4):
+def time_kmat_cuda(G1,G2,lamb=1, walk=4):
 
     #kernel routine
     ker = Kernel()
-    t0 = time()
-
-    # compile the kernel
     ker.compile_kernel()
-
-    # prebook the weight and index matrix
-    # required for the calculation of self.Wx
     t0 = time()
-    n1 = G1.num_edges
-    n2 = G2.num_edges
-    n_edges_prod = 2*n1*n2
-    ker.weight_product = gpuarray.zeros(n_edges_prod, np.float32)
-    ker.index_product = gpuarray.zeros((n_edges_prod,2), np.int32)
-    print('GPU - Mem  : %f' %(time()-t0))
-
     ker.compute_kron_mat_cuda(G1,G2)
-    ker.compute_px_cuda(G1,G2)
-    ker.compute_W0_cuda(G1,G2)
+    return time() - t0
 
-    # compute the graphs
-    ker.compute_K(lamb=lamb,walk=walk)
-    print("Total time : %f\n" %(time()-t0))
+def time_kmat_cublas(G1,G2,lamb=1, walk=4):
+
+    #kernel routine
+    ker = Kernel()
+    ker.compile_kernel()
+    t0 = time()
+    ker.compute_kron_mat_cublas(G1,G2)
+    return time() - t0
+
 
 if __name__ == "__main__":
 
+    num_rep = 1
+    time_cpu_iter, time_cpu_comb,  time_cpu_vect = [], [], []
+    time_cuda, time_cublas = [], []
 
-    # generate graphs
-    num_nodes  = [100,100]
-    edge_proba = 0.5
-    G1 = generate_graph('g1',num_nodes, edge_proba)
-    G2 = generate_graph('g2',num_nodes, edge_proba)
+    mean_time_cpu_iter, mean_time_cpu_comb, mean_time_cpu_vect = [], [], []
+    mean_time_cuda, mean_time_cublas = [], []
+    
+    sizes = [2**2,2**3,2**4,2**5,2**6,2**7,2**8,2**9,2**10,2**11]
 
-    #test_cpu(G1,G2)
-    test_gpu(G1,G2)
+    for iS,s in enumerate(sizes):
+
+        # generate graphs
+        num_nodes  = [s,s]
+        edge_proba = 6./s
+
+        time_cpu_iter.append([])
+        time_cpu_comb.append([])
+        time_cpu_vect.append([])
+        time_cuda.append([])
+        time_cublas.append([])
+      
+
+        for _ in range(num_rep):
+
+            G1 = generate_graph('g1',num_nodes, edge_proba)
+            G2 = generate_graph('g2',num_nodes, edge_proba)
+            print('G1 : Number of Nodes : %d Number of Edges : %d' %(G1.num_nodes,G1.num_edges))
+            print('G2 : Number of Nodes : %d Number of Edges : %d' %(G2.num_nodes,G2.num_edges))
+
+            time_cpu_comb[iS].append(time_kmat_cpu(G1,G2,method='combvec'))
+            time_cpu_iter[iS].append(time_kmat_cpu(G1,G2,method='iter'))
+            time_cpu_vect[iS].append(time_kmat_cpu(G1,G2,method='vect'))
+
+            time_cuda[iS].append(time_kmat_cuda(G1,G2))
+            time_cublas[iS].append(time_kmat_cublas(G1,G2))
+
+        mean_time_cpu_comb.append(np.mean(time_cpu_comb[iS]))
+        mean_time_cpu_iter.append(np.mean(time_cpu_iter[iS]))
+        mean_time_cpu_vect.append(np.mean(time_cpu_vect[iS]))
+
+        mean_time_cuda.append(np.mean(time_cuda[iS]))
+        mean_time_cublas.append(np.mean(time_cublas[iS]))
+
+
+    np.savetxt('sizes.dat',np.array(sizes))
+
+    np.savetxt('mean_time_cpu_iter.dat',np.array(mean_time_cpu_iter))
+    np.savetxt('mean_time_cpu_comb.dat',np.array(mean_time_cpu_comb))
+    np.savetxt('mean_time_cpu_vect.dat',np.array(mean_time_cpu_vect))
+    np.savetxt('mean_time_cuda.dat',np.array(mean_time_cuda))
+    np.savetxt('mean_time_cublas.dat',np.array(mean_time_cublas))
+
+    sizes = np.array(sizes)
+    plt.plot(2*sizes,mean_time_cpu_iter,'o-',label='CPU iter')
+    plt.plot(2*sizes,mean_time_cpu_comb,'o-',label='CPU comb')
+    plt.plot(2*sizes,mean_time_cpu_vect,'o-',label='CPU vect')
+    plt.plot(2*sizes,mean_time_cuda,'o-',label='CUDA')
+    plt.plot(2*sizes,mean_time_cublas,'o-',label='cuBLAS')
+    plt.xlabel('Number of Nodes')
+    plt.ylabel('Run time (sec.)')
+    plt.legend()
+
+    plt.show()
+
 
 
 

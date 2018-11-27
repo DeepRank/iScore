@@ -20,6 +20,14 @@ try:
 except ModuleNotFoundError:
     print('Warning : pycuda not found')
 
+try:
+    import skcuda.linalg as culinalg
+    import skcuda.misc as cumisc
+    culinalg.init()
+except ModuleNotFoundError:
+    print('Warning : scikit-cuda not found')
+
+
 
 class Kernel(object):
 
@@ -563,9 +571,82 @@ class Kernel(object):
         (index1[:,0][:,np.newaxis] + index2[:,0]).reshape(-1,1),
         (index1[:,1][:,np.newaxis] + index2[:,1]).reshape(-1,1)))
 
+
     ##############################################################
     #
-    #  GPU Routines
+    #  CUBLAS Routines
+    #
+    ##############################################################
+
+
+    def compute_kron_mat_cublas(self,g1,g2): # pragma: no cover
+        """Kroenecker matrix calculation edges pssm similarity.
+
+        Args:
+            g1 (iScore.Graph): first graph
+            g2 (iScore.Graph): second graph
+
+        """
+        t0 = time()
+        row,col,weight = [],[],[]
+        n1,n2 = g1.num_edges,g2.num_edges
+        N = n1*n2
+
+        # double the edges index for g1
+        index1 = np.vstack((g1.edges_index,np.flip(g1.edges_index,axis=1)))
+        index2 = g2.edges_index
+
+        # double the pssm edges for g1
+        pssm1 = np.vstack((g1.edges_pssm,np.hstack((g1.edges_pssm[:,20:],g1.edges_pssm[:,:20]))))
+        pssm2 = g2.edges_pssm
+
+        # compute the weight
+        weight = self._rbf_kernel_vectorized_cublas(pssm1,pssm2)
+        ind    = self._get_index_vect(index1,index2,g2.num_nodes)
+
+        # final size
+        n_nodes_prod = g1.num_nodes*g2.num_nodes
+
+        # instead of taking the transpose we duplicate
+        # the weight and indexes (with switch
+        weight = np.concatenate((weight,weight))
+        ind = np.vstack((ind,np.flip(ind,axis=1)))
+        index = ( ind[:,0],ind[:,1] )
+
+        # create the matrix
+        self.Wx = sp_sparse.coo_matrix( (weight,index),shape=( n_nodes_prod,n_nodes_prod ) )
+
+        print('GPU - Kron : %f' %(time()-t0))
+
+
+    @staticmethod
+    def _rbf_kernel_vectorized_cublas(data1,data2,sigma=10): # pragma: no cover
+        """kernel for edge similarity computed with the vectorized method
+
+        Args:
+            data1 (TYPE): pssm data 1
+            data2 (TYPE): pssm dta 2
+            sigma (int, optional): exponent of the exponetial
+
+        Returns:
+            np.array: value of the rbk kernel for all the pairs
+        """
+        beta = 2*sigma**2
+        d1_ = gpuarray.to_gpu(data1.astype(np.float32))
+        d2_ = gpuarray.to_gpu(data2.astype(np.float32))
+        mgpu  = -2*culinalg.dot(d1_,d2_,transa='N',transb='T')
+        vgpu = cumisc.sum(d1_**2,axis=1)[:,None]
+        cumisc.add_matvec(mgpu,vgpu,out=mgpu)
+
+        vgpu = cumisc.sum(d2_**2,axis=1)
+        cumisc.add_matvec(mgpu,vgpu,out=mgpu)
+
+        mcpu = mgpu.get()
+        return np.exp(-mcpu/beta).reshape(-1)
+
+    ##############################################################
+    #
+    #  CUDA Routines
     #
     ##############################################################
 
