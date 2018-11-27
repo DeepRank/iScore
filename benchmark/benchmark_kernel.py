@@ -3,6 +3,14 @@ from iScore.graphrank.kernel import Kernel
 import networkx as nx
 from networkx.algorithms import bipartite
 
+try:
+    import pycuda.autoinit
+    from pycuda import driver, compiler, gpuarray, tools
+    from pycuda.reduction import ReductionKernel
+
+except ModuleNotFoundError:
+    print('Warning : pycuda not found')
+
 import numpy as np
 from time import time
 
@@ -33,6 +41,19 @@ def test_gpu(G1,G2,lamb=1, walk=4):
     ker = Kernel()
     t0 = time()
 
+    # compile the kernel
+    ker.compile_kernel()
+
+    # prebook the weight and index matrix
+    # required for the calculation of self.Wx
+    t0 = time()
+    n1 = G1.num_edges
+    n2 = G2.num_edges
+    n_edges_prod = 2*n1*n2
+    ker.weight_product = gpuarray.zeros(n_edges_prod, np.float32)
+    ker.index_product = gpuarray.zeros((n_edges_prod,2), np.int32)
+    print('GPU - Mem  : %f' %(time()-t0))
+
     ker.compute_kron_mat_cuda(G1,G2)
     ker.compute_px_cuda(G1,G2)
     ker.compute_W0_cuda(G1,G2)
@@ -50,8 +71,8 @@ if __name__ == "__main__":
     G1 = generate_graph('g1',num_nodes, edge_proba)
     G2 = generate_graph('g2',num_nodes, edge_proba)
 
-    test_cpu(G1,G2)
-    #test_gpu(G1,G2)
+    #test_cpu(G1,G2)
+    test_gpu(G1,G2)
 
 
 
