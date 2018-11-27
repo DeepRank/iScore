@@ -27,7 +27,6 @@ parser.add_argument('--archive',default='training_set.tar.gz', type = str, help=
 args = parser.parse_args()
 
 
-
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()

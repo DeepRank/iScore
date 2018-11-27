@@ -757,7 +757,7 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
             f5 = None
 
         # create the graphs
-        gen = GenGraph(pdbfile,pssm,aligned=aligned,outname=graphfile,h5file=f5)
+        GenGraph(pdbfile,pssm,aligned=aligned,outname=graphfile,h5file=f5)
 
         if export_hdf5:
             f5.close()

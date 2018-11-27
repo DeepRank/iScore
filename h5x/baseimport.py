@@ -1,21 +1,10 @@
 #%matplotlib inline
-
-import community
-import networkx as nx
-import torch
-
-from sklearn import manifold, datasets
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-
 import numpy as np
 import os
 import subprocess as sp
-from torch_geometric.data import Data
-from graphprot.community_pooling import *
-from graphprot.Graph import Graph
+
 from pdb2sql.pdb2sqlcore import pdb2sql
+
 # def tsne_graph(grp,method):
 
 #     import plotly.offline as py
