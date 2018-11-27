@@ -52,6 +52,9 @@ before_install:
   # install matplotlib
   - pip install matplotlib
 
+  # install h5py
+  - conda install h5py
+
 install:
   - pip install -qe .[test]
 
