@@ -26,7 +26,7 @@ class iscore_energy(object):
         if not os.path.isdir(self.pdb_path):
             raise NotADirectoryError()
 
-        filenames = os.listdir(self.pdb_path)
+        filenames = list(filter(lambda x: x.endswith('.pdb'),os.listdir(self.pdb_path)))
 
         try:
 
