@@ -16,6 +16,9 @@ from mpi4py import MPI
 parser = argparse.ArgumentParser(description=' iScore - Predict the class of new conformations')
 
 # where the kernels are stored
+parser.add_argument('-gt', '--ground_truth',default=None,type=str,help='File containing the ground truth')
+
+# where the kernels are stored
 parser.add_argument('--kernel',default='./kernel/',type=str,help='Kernel pickle file to use')
 
 # where the graphs are stored
@@ -55,6 +58,6 @@ comm.Barrier()
 
 # predcit the model
 if rank == 0:
-	iscore_svm(load_model=None,package_name=args.archive)
+	iscore_svm(load_model=None,package_name=args.archive,testID=args.ground_truth)
 
 

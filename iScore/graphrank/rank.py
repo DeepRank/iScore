@@ -82,7 +82,7 @@ class DataSet(object):
                 names = [id_[1] for id_ in idlist]
                 return names, classes
             else:
-                print('Warning: Ground truth classes not found in list' )
+                #print('Warning: Ground truth classes not found in list' )
                 names = idlist
                 classes = [None]*nl
                 return names, classes
@@ -252,7 +252,7 @@ class SVM(object):
 
         # pedict the classes
         self.testDataSet.iScore = svm_predict(ground_truth,self.testDataSet.Kmat,model)
-        print(self.testDataSet.iScore)
+        #print(self.testDataSet.iScore)
 
         # clean up crew
         os.remove('./_tmp_model.pkl')
@@ -388,7 +388,10 @@ def iscore_svm(train=False,train_class='caseID.lst',trainID=None,testID=None,
         if testID is None:
             testID = [os.path.splitext(n)[0] for n in os.listdir('./graph/')]
         else:
-            testID = [os.path.splitext(n)[0] for n in os.listdir(testID)]
+            if os.path.isdir(testID):
+                testID = [os.path.splitext(n)[0] for n in os.listdir(testID)]
+            elif os.path.isfile(testID):
+                testID = testID
 
         testdata = DataSet(trainID,Kfile,maxlen,testID=testID)
         svm = SVM(testDataSet = testdata)

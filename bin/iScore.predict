@@ -17,6 +17,9 @@ from iScore.function.score import iscore
 parser = argparse.ArgumentParser(description=' iScore - Predict the class of new conformations')
 
 # where the kernels are stored
+parser.add_argument('-gt', '--ground_truth',default=None,type=str,help='File containing the ground truth')
+
+# where the kernels are stored
 parser.add_argument('--kernel',default='./kernel/',type=str,help='Kernel pickle file to use')
 
 # where the graphs are stored
@@ -31,19 +34,23 @@ parser.add_argument('--energy',default='haddock',help='energy terms : None or ha
 # get the args
 args = parser.parse_args()
 
-# create the graphs
+# create the graphss
 if not os.path.isdir(args.graph):
-	os.mkdir(args.graph)
-iscore_graph(outdir=args.graph)
+    os.mkdir(args.graph)
+    iscore_graph(outdir=args.graph)
+else:
+    print('Reusing graphs in %s' %(args.graph))
 
 # compute the kernels
 if not os.path.isdir(args.kernel):
-	os.mkdir(args.kernel)
-kfile = os.path.join(args.kernel,'kernel.pckl')
-iscore_kernel(test_graph=args.graph,train_archive=args.archive,outfile=kfile)
+    os.mkdir(args.kernel)
+    kfile = os.path.join(args.kernel,'kernel.pckl')
+    iscore_kernel(test_graph=args.graph,train_archive=args.archive,outfile=kfile)
+else:
+    print('Reusing kernels in %s' %(args.kernel))
 
 # grahrank score
-iscore_svm(load_model=None,package_name=args.archive)
+iscore_svm(load_model=None,package_name=args.archive,testID=args.ground_truth)
 
 # add energy terms
 # iscore_energy(method=args.energy)
