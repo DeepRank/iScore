@@ -3,8 +3,8 @@ import numpy as np
 
 class iscore(object):
 
-    def __init__(self,graphrank_out='GraphRank.out', energy_out='Energy.out',
-                 weights = [0.941,0.041,0.217,0.032]):
+    def __init__(self,graphrank_out='GraphRank.dat', energy_out='Energy.dat',
+                 weights = [-0.941,0.041,0.217,0.032]):
 
         self.graphrank_out = graphrank_out
         self.energy_out = energy_out

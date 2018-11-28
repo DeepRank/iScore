@@ -17,6 +17,7 @@ class iscore_energy(object):
 
     def get_energies(self):
         """Get the enegetic terms with the spcified method."""
+
         self.mol_name = []
         self.evdw = []
         self.ec = []
@@ -26,24 +27,39 @@ class iscore_energy(object):
             raise NotADirectoryError()
 
         filenames = os.listdir(self.pdb_path)
-        for f in filenames:
 
-            self.mol_name.append(os.path.splitext(f)[0])
-            if self.method == 'haddock':
+        try:
 
-                e = HaddockEnergy(os.path.join(self.pdb_path,f))
-                e.read_energies()
+            for f in filenames:
 
-                self.evdw.append(e.evdw)
-                self.ec.append(e.ec)
-                self.edesolv.append(e.edesolv)
+                self.mol_name.append(os.path.splitext(f)[0])
+                if self.method == 'haddock':
 
-            else:
-                raise ValueError('Only Haddock energy term supported so far')
+                    e = HaddockEnergy(os.path.join(self.pdb_path,f))
+                    e.read_energies()
 
-        self.evdw = np.array(self.evdw)
-        self.ec = np.array(self.ec)
-        self.edesolv = np.array(self.edesolv)
+                    self.evdw.append(e.evdw)
+                    self.ec.append(e.ec)
+                    self.edesolv.append(e.edesolv)
+
+                else:
+
+                    raise ValueError('Only Haddock energy term supported so far')
+
+            self.evdw = np.array(self.evdw)
+            self.ec = np.array(self.ec)
+            self.edesolv = np.array(self.edesolv)
+
+        except Exception as e:
+
+            print(e)
+            print(" Warning : Issue encountered during the calculation of the energy terms")
+            print("           All energy terms set to 0 (i.e. GraphRank score only)")
+
+            nmol = len(filenames)
+            self.evdw = np.zeros(nmol)
+            self.ec = np.zeros(nmol)
+            self.edesolv = np.zeros(nmol)
 
     def normalize_features(self):
         """Normalize the feature."""
@@ -56,7 +72,11 @@ class iscore_energy(object):
     @staticmethod
     def _normalize(x):
         """Normalizing function."""
-        return (x-np.median(x))/iqr(x)
+        N = iqr(x)
+        if N != 0.:
+            return (x-np.median(x))/iqr(x)
+        else :
+            return x
 
     def print(self):
         """Print the energy terms."""

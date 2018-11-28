@@ -5,7 +5,8 @@ import argparse
 from iScore.graphrank.graph import iscore_graph
 from iScore.graphrank.kernel import iscore_kernel
 from iScore.graphrank.rank import iscore_svm
-#from iScore.energetic.energy import iscore_energy
+
+from iScore.energetic.energy import iscore_energy
 from iScore.function.score import iscore
 
 ##########################################################################
