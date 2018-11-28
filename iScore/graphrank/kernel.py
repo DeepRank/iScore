@@ -198,7 +198,8 @@ class Kernel(object):
     #
     ##############################################################
 
-    def run(self,lamb,walk,outfile='kernel.pkl',cuda=False,gpu_block=(8,8,1),check=None,test=False,mpi_rank=0,mpi_size=1):
+    def run(self,lamb,walk,outfile='kernel.pkl',cuda=False,gpu_block=(8,8,1),check=None,
+            test=False,mpi_rank=0,mpi_size=1):
         """Compute all the K values for all the graph pairs.
 
         Args:
@@ -559,6 +560,7 @@ class Kernel(object):
             list(int): List of index in the bigraph
         """
         index1 = index1*float(size2)
+
         return np.hstack((
         (index1[:,0][:,np.newaxis] + index2[:,0]).reshape(-1,1),
         (index1[:,1][:,np.newaxis] + index2[:,1]).reshape(-1,1)))

@@ -9,8 +9,9 @@ from Bio import pairwise2
 
 class Graph(object):
 
-    def __init__(self,fname=None,file_type=None,
-                      name=None,nodes_pssm=None,nodes_info=None,edges_index=None):
+    def __init__(self,fname=None,file_type=None, chain_label=['A','B'],
+                      name=None,nodes_pssm=None,
+                      nodes_info=None,edges_index=None):
         """Graph object corresponding to a given PDB file.
 
         Example:
@@ -31,10 +32,12 @@ class Graph(object):
         """
 
         self.fname = fname
+
         if fname is not None:
             self.load(fname,file_type)
         else:
             self.name = name
+            self.chain_label = chain_label
             self.nodes_pssm_data = nodes_pssm
             self.nodes_info_data = nodes_info
             self.edges_index = edges_index
@@ -226,7 +229,7 @@ class Graph(object):
             pssm_dict (dict): pssm information
         """
         pssm = {}
-        for chain in ['A','B']:
+        for chain in self.chain_label:
             pssm[chain] = self.read_PSSM_data(pssm_dict[chain])
 
 
@@ -240,7 +243,7 @@ class Graph(object):
 
         self.pssm_name_dict = {}
 
-        for chain in ['A','B']:
+        for chain in self.chain_label:
             for iL in range(len(pssm[chain])):
                 if pssm[chain][iL][1] in resmap:
                     res = '_'.join([chain,pssm[chain][iL][0],resmap[pssm[chain][iL][1]]])
@@ -310,7 +313,8 @@ class GenGraph():
 
         # pssm data
         self.pssm = {}
-        for chain in ['A','B']:
+        self.chain_label = list(pssmfile.keys())
+        for chain in self.chain_label:
             self.pssm[chain] = self.read_PSSM_data(pssmfile[chain])
 
         # check format
@@ -348,10 +352,12 @@ class GenGraph():
         Returns:
             bool: 1 if format is ok 0 otherwise
         """
+
+        key = list(self.pssm.keys())[0]
         if aligned:
-            return len(self.pssm['A'][0]) == 25
+            return len(self.pssm[key][0]) == 25
         else:
-            return len(self.pssm['A'][0]) == 44 #48 ?
+            return len(self.pssm[key][0]) == 44 #48 ?
 
 
     def read_PSSM_data(self,fname):
@@ -373,7 +379,7 @@ class GenGraph():
 
         self.aligned_pssm = {}
         self.aligned_ic = {}
-        for chain in ['A','B']:
+        for chain in self.chain_label:
 
             iResPDB,iResPSSM = 0,0
             pdbres = [(numb,name) for numb,name in self.pdb.get('resSeq,resName',chainID=chain)]
@@ -399,7 +405,7 @@ class GenGraph():
         """Aling the squence given in a PDN and its PSSM files."""
 
         self.seq_aligned = {'pdb':{},'pssm':{}}
-        for chain in ['A','B']:
+        for chain in self.chain_label:
             pdb_seq = self._get_sequence(chain=chain)
             pssm_seq = ''.join( [data[1] for data in self.pssm[chain] ] )
             self.seq_aligned['pdb'][chain], self.seq_aligned['pssm'][chain] = self._get_aligned_seq(pdb_seq,pssm_seq)
@@ -448,7 +454,7 @@ class GenGraph():
         """get the information from an aligned PSSM file."""
 
         self.aligned_pssm, self.aligned_ic = {},{}
-        for chain in ['A','B']:
+        for chain in self.chain_label:
             for l in self.pssm[chain]:
                 resi = int(l[0])
                 resn = self.resmap[l[1]]
@@ -464,7 +470,10 @@ class GenGraph():
         """
 
         db = interface(self.pdbfile)
-        res_contact_pairs = db.get_contact_residues(cutoff = self.cutoff, return_contact_pairs=True)
+        res_contact_pairs = db.get_contact_residues(cutoff = self.cutoff,
+                                                    chain1=self.chain_label[0],
+                                                    chain2=self.chain_label[1],
+                                                    return_contact_pairs=True)
 
         # tag the non residues
         keys_to_pop = []
