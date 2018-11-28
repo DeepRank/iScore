@@ -53,10 +53,10 @@ else:
 iscore_svm(load_model=None,package_name=args.archive,testID=args.ground_truth)
 
 # add energy terms
-# iscore_energy(method=args.energy)
+iscore_energy(method=args.energy)
 
 # # final energy function
-# iscore()
+iscore()
 
 
 
