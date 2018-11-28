@@ -629,6 +629,9 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
     if not os.path.isdir(outdir):
         os.mkdir(outdir)
 
+    # get all the pssm files
+    all_pssm_files = os.listdir(pssm_path)
+
     # loop over all the PDBs
     for name in pdbs:
 
@@ -640,15 +643,24 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
         # mol name and base name
         mol_name = os.path.splitext(name)[0]
 
-        # pssms files
-        pssmA = os.path.join(pssm_path,mol_name+'.A.pdb.pssm')
-        pssmB = os.path.join(pssm_path,mol_name+'.B.pdb.pssm')
+        # get the pssm files
+        mol_pssm = list(filter(lambda x : x.startswith(mol_name) and x.endswith('.pdb.pssm'),all_pssm_files))
+        mol_pssm.sort()
+        chain_label = [m.split('.')[-3] for m in mol_pssm]
+
+        # print the pssm and chains found
+        print(' --> Found the following chains and PSSM')
+        for c,f in zip(chain_label,mol_pssm):
+            print('     %s : %s' %(c,f))
+
+        # append the pssm path to the files
+        mol_pssm = [os.path.join(pssm_path,f) for f in mol_pssm]
 
         # check if the pssms exists
-        if os.path.isfile(pssmA) and os.path.isfile(pssmB):
-            pssm = {'A':pssmA,'B':pssmB}
+        if os.path.isfile(mol_pssm[0]) and os.path.isfile(mol_pssm[1]):
+            pssm = {chain_label[0]:mol_pssm[0],chain_label[1]:mol_pssm[1]}
         else:
-            raise FileNotFoundError(pssmA + ' or ' + pssmB + ' not found')
+            raise FileNotFoundError(mol_pssm[0] + ' or ' + mol_pssm[1] + ' not found')
 
         # output file
         graphfile = os.path.join(outdir+mol_name+'.pckl')
@@ -744,17 +756,25 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
 
         # mol name and base name
         mol_name = os.path.splitext(name)[0]
-        base_name = mol_name.split('_')[0]
 
-        # pssms files
-        pssmA = os.path.join(pssm_path,mol_name+'.A.pdb.pssm')
-        pssmB = os.path.join(pssm_path,mol_name+'.B.pdb.pssm')
+        # get the pssm files
+        mol_pssm = list(filter(lambda x : x.startswith(mol_name) and x.endswith('.pdb.pssm'),all_pssm_files))
+        mol_pssm.sort()
+        chain_label = [m.split('.')[-3] for m in mol_pssm]
+
+        # print the pssm and chains found
+        print(' --> Found the following chains and PSSM')
+        for c,f in zip(chain_label,mol_pssm):
+            print('     %s : %s' %(c,f))
+
+        # append the pssm path to the files
+        mol_pssm = [os.path.join(pssm_path,f) for f in mol_pssm]
 
         # check if the pssms exists
-        if os.path.isfile(pssmA) and os.path.isfile(pssmB):
-            pssm = {'A':pssmA,'B':pssmB}
+        if os.path.isfile(mol_pssm[0]) and os.path.isfile(mol_pssm[1]):
+            pssm = {chain_label[0]:mol_pssm[0],chain_label[1]:mol_pssm[1]}
         else:
-            raise FileNotFoundError(pssmA + ' or ' + pssmB + ' not found')
+            raise FileNotFoundError(mol_pssm[0] + ' or ' + mol_pssm[1] + ' not found')
 
         # output file
         graphfile = os.path.join(outdir+mol_name+'.pckl')
