@@ -28,8 +28,8 @@ __host__ __device__ float rbf_kernel(int tx, int ty, float *a, float *b, int len
 
 }
 
-__global__ void create_kron_mat( int *edges_index_1, int *edges_index_2, 
-                                 float *edges_pssm_1, float *edges_pssm_2, 
+__global__ void create_kron_mat( int *edges_index_1, int *edges_index_2,
+                                 float *edges_pssm_1, float *edges_pssm_2,
                                  int *edges_index_product, float *edges_weight_product,
                                  int n_edges_1, int n_edges_2,
                                  int n_nodes_2)
