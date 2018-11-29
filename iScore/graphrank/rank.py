@@ -135,13 +135,16 @@ class DataSet(object):
 
                 if (name_test,name_train) in K:
                     self.Kmat[itest,itrain] = np.sum(K[(name_test,name_train)][:self.maxlen])
+
                 elif (name_train,name_test) in K:
                     self.Kmat[itest,itrain] = np.sum(K[(name_train,name_test)][:self.maxlen])
+
                 else:
-                    print('Error : Graph combination (%s,%s) not found in files' %(name_test,name_train))
+
+                    print('Warning : Graph combination (%s,%s) not found in files' %(name_test,name_train))
                     for f in self.Kfile:
                         print('\t\t',f)
-                    raise ValueError('Graphs not Found')
+                    #raise ValueError('Graphs not Found')
 
         self.Kmat = self.Kmat.tolist()
 
