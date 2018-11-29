@@ -195,7 +195,7 @@ int main(int argc, char **argv)
 
     // comoute the kronecker matrix  
     double iStart = cpuSecond();
-    create_kron_mat<<< grid, block >>>(d_edge_index_1,d_edge_index_2, \
+    create_kron_mat_shared<<< grid, block >>>(d_edge_index_1,d_edge_index_2, \
                                        d_edge_pssm_1, d_edge_pssm_2,  \
                                        d_edge_index_prod, d_edge_weight_prod,
                                        num_edge_1, num_edge_2, num_node_2 );

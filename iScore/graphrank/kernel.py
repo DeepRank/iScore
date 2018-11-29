@@ -668,12 +668,13 @@ class Kernel(object):
         self.mod = compiler.SourceModule(kernel_code)
         print('GPU - Kern : %f' %(time()-t0))
 
-    def compute_kron_mat_cuda(self,g1,g2,gpu_block=None): # pragma: no cover
+    def compute_kron_mat_cuda(self,g1,g2,kernel_name='create_kron_mat',gpu_block=None): # pragma: no cover
         """kronecker matrix with the edges pssm
 
         Args:
             g1 (iScore.Graph): first graph
             g2 (iScore.Graph): second graph
+            kernel_name (str): name of the kernel to use
             gpu_block (None, optional): Size of the GPU block
         """
         n1 = g1.num_edges
@@ -688,9 +689,10 @@ class Kernel(object):
         dim = (n1,n2,1)
         grid = tuple([int(np.ceil(n/t)) for n,t in zip(dim,block)])
 
+        # start timer
         t0 = time()
         driver.Context.synchronize()
-        create_kron_mat_gpu = self.mod.get_function('create_kron_mat')
+        create_kron_mat_gpu = self.mod.get_function(kernel_name)
 
         # put the raw pssm on the GPU
         pssm1 = gpuarray.to_gpu(np.array(g1.edges_pssm).astype(np.float32))

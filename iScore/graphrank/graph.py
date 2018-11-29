@@ -703,14 +703,14 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
         # make sure that the dir containing the PDBs exists
         if not os.path.isdir(pdb_path):
             raise NotADirectoryError(pdb_path + ' is not a directory')
-        else:
-            pdb_files = os.listdir(pdb_path)
+        # else:
+        #     pdb_files = os.listdir(pdb_path)
 
         # make sure that the dir containing the PSSMs exists
         if not os.path.isdir(pssm_path):
             raise NotADirectoryError(pssm_path + ' is not a directory')
-        else:
-            pssm_files = os.listdir(pssm_path)
+        # else:
+        #     pssm_files = os.listdir(pssm_path)
 
         # create the outdir if necessary
         if not os.path.isdir(outdir):
@@ -745,6 +745,9 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
 
     else:
         local_pdbs = mpi_comm.recv(source=0,tag=11)
+
+    # get all the pssm files
+    all_pssm_files = os.listdir(pssm_path)
 
     # loop over all the PDBs
     for name in local_pdbs:

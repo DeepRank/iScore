@@ -29,13 +29,13 @@ def time_kmat_cpu(G1,G2,lamb=1, walk=4, method='vect'):
     ker.compute_kron_mat(G1,G2)
     return time() - t0
 
-def time_kmat_cuda(G1,G2,lamb=1, walk=4):
+def time_kmat_cuda(G1,G2,kernel_name, lamb=1, walk=4, ):
 
     #kernel routine
     ker = Kernel()
     ker.compile_kernel()
     t0 = time()
-    ker.compute_kron_mat_cuda(G1,G2)
+    ker.compute_kron_mat_cuda(G1,G2,kernel_name=kernel_name)
     return time() - t0
 
 def time_kmat_cublas(G1,G2,lamb=1, walk=4):
@@ -52,10 +52,10 @@ if __name__ == "__main__":
 
     num_rep = 1
     time_cpu_iter, time_cpu_comb,  time_cpu_vect = [], [], []
-    time_cuda, time_cublas = [], []
+    time_cuda, time_cuda_shared, time_cublas = [], [], []
 
     mean_time_cpu_iter, mean_time_cpu_comb, mean_time_cpu_vect = [], [], []
-    mean_time_cuda, mean_time_cublas = [], []
+    mean_time_cuda, mean_time_cuda_shared, mean_time_cublas = [], [], []
     
     sizes = [2**2,2**3,2**4,2**5,2**6,2**7,2**8,2**9,2**10,2**11]
 
@@ -68,7 +68,9 @@ if __name__ == "__main__":
         time_cpu_iter.append([])
         time_cpu_comb.append([])
         time_cpu_vect.append([])
+
         time_cuda.append([])
+        time_cuda_shared.append([])
         time_cublas.append([])
       
 
@@ -83,13 +85,15 @@ if __name__ == "__main__":
             time_cpu_iter[iS].append(time_kmat_cpu(G1,G2,method='iter'))
             time_cpu_vect[iS].append(time_kmat_cpu(G1,G2,method='vect'))
 
-            time_cuda[iS].append(time_kmat_cuda(G1,G2))
+            time_cuda[iS].append(time_kmat_cuda(G1,G2,kernel_name='create_kron_mat'))
+            time_cuda_shared[iS].append(time_kmat_cuda(G1,G2,kernel_name='create_kron_mat_shared'))
             time_cublas[iS].append(time_kmat_cublas(G1,G2))
 
         mean_time_cpu_comb.append(np.mean(time_cpu_comb[iS]))
         mean_time_cpu_iter.append(np.mean(time_cpu_iter[iS]))
         mean_time_cpu_vect.append(np.mean(time_cpu_vect[iS]))
 
+        mean_time_cuda_shared.append(np.mean(time_cuda_shared[iS]))
         mean_time_cuda.append(np.mean(time_cuda[iS]))
         mean_time_cublas.append(np.mean(time_cublas[iS]))
 
@@ -99,6 +103,7 @@ if __name__ == "__main__":
     np.savetxt('mean_time_cpu_iter.dat',np.array(mean_time_cpu_iter))
     np.savetxt('mean_time_cpu_comb.dat',np.array(mean_time_cpu_comb))
     np.savetxt('mean_time_cpu_vect.dat',np.array(mean_time_cpu_vect))
+    np.savetxt('mean_time_cuda_shared.dat',np.array(mean_time_cuda_shared))
     np.savetxt('mean_time_cuda.dat',np.array(mean_time_cuda))
     np.savetxt('mean_time_cublas.dat',np.array(mean_time_cublas))
 
@@ -106,8 +111,9 @@ if __name__ == "__main__":
     plt.plot(2*sizes,mean_time_cpu_iter,'o-',label='CPU iter')
     plt.plot(2*sizes,mean_time_cpu_comb,'o-',label='CPU comb')
     plt.plot(2*sizes,mean_time_cpu_vect,'o-',label='CPU vect')
-    plt.plot(2*sizes,mean_time_cuda,'o-',label='CUDA')
     plt.plot(2*sizes,mean_time_cublas,'o-',label='cuBLAS')
+    plt.plot(2*sizes,mean_time_cuda,'o-',label='CUDA')
+    plt.plot(2*sizes,mean_time_cuda_shared,'o-',label='CUDA(SMEM)')
     plt.xlabel('Number of Nodes')
     plt.ylabel('Run time (sec.)')
     plt.legend()
