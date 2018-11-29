@@ -25,6 +25,7 @@ class iscore(object):
 
         for line in data[1:]:
             mol,vdw,clb,des = line.split()
+
             if mol not in self.features:
                 self.features[mol] = dict()
 
@@ -49,8 +50,12 @@ class iscore(object):
         """compute and output the iScore."""
 
         for mol,feat in self.features.items():
-            data = [feat['grank'],feat['evdw'],feat['ec'],feat['edesolv']]
-            self.features[mol]['iscore'] = self._scoring_function(data,self.weights)
+
+            if all( k in feat for k in ['grank','evdw','ec','edesolv']):
+                data = [feat['grank'],feat['evdw'],feat['ec'],feat['edesolv']]
+                self.features[mol]['iscore'] = self._scoring_function(data,self.weights)
+            else:
+                print('Data missing for mol %s. Molecule excluded from scoring' %mol)
 
     def print(self):
         """Print the energy terms."""
