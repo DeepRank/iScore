@@ -689,6 +689,7 @@ class Kernel(object):
         dim = (n1,n2,1)
         grid = tuple([int(np.ceil(n/t)) for n,t in zip(dim,block)])
 
+        # start timer
         t0 = time()
         driver.Context.synchronize()
         create_kron_mat_gpu = self.mod.get_function(kernel_name)
