@@ -123,8 +123,12 @@ class Kernel(object):
         else:
             train_names = self._get_file_names(self.trainIDs,self.train_graph)
             for name in train_names:
-                self.train_graphs[name] = Graph(self.train_graph + '/' + name)
-                self.max_num_edges_train = np.max([self.max_num_edges_train,self.train_graphs[name].num_edges])
+                g = Graph(self.train_graph + '/' + name)
+                if g.num_nodes > 0:
+                    self.train_graphs[name] = g
+                    self.max_num_edges_train = np.max([self.max_num_edges_train,self.train_graphs[name].num_edges])
+                else:
+                    print('Warning : Graph %s was exclued from the training data (num_ndodes = 0)' %name)
 
         test_names  = self._get_file_names(self.testIDs,self.test_graph)
 
@@ -137,8 +141,12 @@ class Kernel(object):
         # get the test graphs
         self.test_graphs = OrderedDict()
         for name in test_names:
-            self.test_graphs[name] = Graph(self.test_graph + '/' + name)
-            self.max_num_edges_test = np.max([self.max_num_edges_test,self.test_graphs[name].num_edges])
+            g = Graph(self.test_graph + '/' + name)
+            if g.num_nodes > 0:
+                self.test_graphs[name] = Graph(self.test_graph + '/' + name)
+                self.max_num_edges_test = np.max([self.max_num_edges_test,self.test_graphs[name].num_edges])
+            else:
+                print('Warning : Graph %s was exclued from the testing data (num_ndodes = 0)' %name)
 
     @staticmethod
     def _get_file_names(filename,dirname):
