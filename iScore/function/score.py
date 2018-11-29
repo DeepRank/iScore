@@ -65,7 +65,8 @@ class iscore(object):
         f.write('{:10} {:>14}     {:>14}     {:>14}     {:>14}     {:>14}\n'.format('#Name','GraphRank','nEVDW','nEC','nEDESOLV','iScore'))
         for name,feat in  self.features.items():
             st = "{:10} {: 14.3f}     {: 14.3f}     {: 14.3f}     {: 14.3f}     {: 14.3f}\n"
-            f.write(st.format(name,feat['grank'],feat['evdw'],feat['ec'],feat['edesolv'],feat['iscore']))
+            if all( k in feat for k in ['grank','evdw','ec','edesolv','iscore']):
+                f.write(st.format(name,feat['grank'],feat['evdw'],feat['ec'],feat['edesolv'],feat['iscore']))
         f.close()
 
     @staticmethod
