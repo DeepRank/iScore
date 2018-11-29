@@ -558,7 +558,10 @@ class GenGraph():
                       nodes_info = nodes_info,
                       edges_index = edges)
 
-        graph.pickle(fname)
+        if graph.num_nodes > 0:
+            graph.pickle(fname)
+        else:
+            printf('Warning : Graph %s not exported (num_nodes = 0)' %fname)
 
 
     def toh5(self,f5):
