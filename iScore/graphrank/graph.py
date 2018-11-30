@@ -579,7 +579,7 @@ class GenGraph():
 
 
 def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
-                 outdir='./graph/',aligned=True, export_hdf5=True):
+                 outdir='./graph/',aligned=True, export_hdf5=False):
     """Function called in the binary iScore.graph
 
     Args:
@@ -683,7 +683,7 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
 
 
 def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
-                     outdir='./graph/',aligned=True, export_hdf5=True,
+                     outdir='./graph/',aligned=True, export_hdf5=False,
                      rank=0,size=1,mpi_comm=None):
     """Function called in the binary iScore.graph.mpi
 
