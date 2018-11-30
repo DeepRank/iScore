@@ -20,11 +20,14 @@ parser.add_argument('--kernel',default='./kernel/',type=str,help='Kernel pickle 
 # where the graphs are stored
 parser.add_argument('--graph',default='./graph/',type=str,help='Graph pickle file to use')
 
+#name of the archive to save
 parser.add_argument('--arc',default='training_set.tar.gz', type = str, help='name of the achive')
+
+# maximum walk length
+parser.add_argument('--walk',default=4, type=int, help='maximum walk length')
 
 # get the args
 args = parser.parse_args()
-
 
 # create the graphs
 if not os.path.isdir(args.graph):
@@ -36,7 +39,7 @@ iscore_graph(outdir=args.graph)
 if not os.path.isdir(args.kernel):
 	os.mkdir(args.kernel)
 kfile = os.path.join(args.kernel,'kernel.pckl')
-iscore_kernel(outfile=kfile)
+iscore_kernel(outfile=kfile,walk=args.walk)
 
 # train the model
 iscore_svm(train=True,package_model=True,package_name=args.arc)
