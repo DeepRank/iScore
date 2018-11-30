@@ -42,6 +42,6 @@ kfile = os.path.join(args.kernel,'kernel.pckl')
 iscore_kernel(outfile=kfile,walk=args.walk)
 
 # train the model
-iscore_svm(train=True,package_model=True,package_name=args.arc)
+iscore_svm(train=True,package_model=True,package_name=args.arc,maxlen=args.walk)
 
 
