@@ -32,14 +32,18 @@ args = parser.parse_args()
 # create the graphs
 if not os.path.isdir(args.graph):
 	os.mkdir(args.graph)
-iscore_graph(outdir=args.graph)
+	iscore_graph(outdir=args.graph)
+else:
+	print("Reuse the graphs in  %s" %args.graph)
 
 
 # compute the kernels
 if not os.path.isdir(args.kernel):
 	os.mkdir(args.kernel)
-kfile = os.path.join(args.kernel,'kernel.pckl')
-iscore_kernel(outfile=kfile,walk=args.walk)
+	kfile = os.path.join(args.kernel,'kernel.pckl')
+	iscore_kernel(outfile=kfile,walk=args.walk)
+else:
+	print("Reuse the kernels in  %s" %args.kernel)
 
 # train the model
 iscore_svm(train=True,package_model=True,package_name=args.arc,maxlen=args.walk)
