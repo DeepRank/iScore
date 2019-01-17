@@ -771,19 +771,22 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
         mol_pssm.sort()
         chain_label = [m.split('.')[-3] for m in mol_pssm]
 
+
         # print the pssm and chains found
         print(' --> Found the following chains and PSSM')
+        pssm = dict()
         for c,f in zip(chain_label,mol_pssm):
             print('     %s : %s' %(c,f))
+            pssm[c] = os.path.join(pssm_path,f)
 
         # append the pssm path to the files
         mol_pssm = [os.path.join(pssm_path,f) for f in mol_pssm]
 
-        # check if the pssms exists
-        if os.path.isfile(mol_pssm[0]) and os.path.isfile(mol_pssm[1]):
-            pssm = {chain_label[0]:mol_pssm[0],chain_label[1]:mol_pssm[1]}
-        else:
-            raise FileNotFoundError(mol_pssm[0] + ' or ' + mol_pssm[1] + ' not found')
+        # # check if the pssms exists
+        # if os.path.isfile(mol_pssm[0]) and os.path.isfile(mol_pssm[1]):
+        #     pssm = {chain_label[0]:mol_pssm[0],chain_label[1]:mol_pssm[1]}
+        # else:
+        #     raise FileNotFoundError(mol_pssm[0] + ' or ' + mol_pssm[1] + ' not found')
 
         # output file
         graphfile = os.path.join(outdir+mol_name+'.pckl')
