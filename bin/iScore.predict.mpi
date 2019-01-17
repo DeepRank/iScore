@@ -3,8 +3,8 @@
 import os
 import subprocess
 import argparse
-from iScore.graphrank.graph import iscore_graph
-from iScore.graphrank.kernel import iscore_kernel
+from iScore.graphrank.graph import iscore_graph_mpi
+from iScore.graphrank.kernel import iscore_kernel_mpi
 from iScore.graphrank.rank import iscore_svm
 
 from iScore.energetic.energy import iscore_energy
