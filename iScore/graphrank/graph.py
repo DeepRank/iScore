@@ -476,6 +476,7 @@ class GenGraph():
                                                     # chain2=self.chain_label[1],
                                                     return_contact_pairs=True)
 
+
         # tag the non residues
         keys_to_pop = []
         for res in res_contact_pairs.keys():
@@ -507,8 +508,7 @@ class GenGraph():
                     nodesB += [res]
                     tmp_reslist += [res]
                 else:
-                    if verbose:
-                        print('removed node', res)
+                    Warning('--> Residue ',res,' not found in PSSM file or Residue not recognized')
             res_contact_pairs[k] = tmp_reslist
 
         nodesB = sorted(set(nodesB))
@@ -654,17 +654,19 @@ def iscore_graph(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
 
         # print the pssm and chains found
         print(' --> Found the following chains and PSSM')
+        pssm = dict()
         for c,f in zip(chain_label,mol_pssm):
             print('     %s : %s' %(c,f))
+            pssm[c] = os.path.join(pssm_path,f)
 
         # append the pssm path to the files
         mol_pssm = [os.path.join(pssm_path,f) for f in mol_pssm]
 
         # check if the pssms exists
-        if os.path.isfile(mol_pssm[0]) and os.path.isfile(mol_pssm[1]):
-            pssm = {chain_label[0]:mol_pssm[0],chain_label[1]:mol_pssm[1]}
-        else:
-            raise FileNotFoundError(mol_pssm[0] + ' or ' + mol_pssm[1] + ' not found')
+        #if os.path.isfile(mol_pssm[0]) and os.path.isfile(mol_pssm[1]):
+        #    pssm = {chain_label[0]:mol_pssm[0],chain_label[1]:mol_pssm[1]}
+        #else:
+        #    raise FileNotFoundError(mol_pssm[0] + ' or ' + mol_pssm[1] + ' not found')
 
         # output file
         graphfile = os.path.join(outdir+mol_name+'.pckl')
