@@ -32,6 +32,9 @@ parser.add_argument('--graph',default='./graph/',type=str,help='Graph pickle fil
 # archive model to use
 parser.add_argument('--archive',default='training_set.tar.gz',help='model archive we want to use')
 
+# archive model to use
+parser.add_argument('--energy',default='haddock',help='energy terms : None or haddock(default)')
+
 # get the args
 args = parser.parse_args()
 
@@ -40,29 +43,41 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-# create the graphs
+# see if graphs are already there
 if rank == 0:
 	if not os.path.isdir(args.graph):
 		os.mkdir(args.graph)
-
+		gen_graph = True
+	else:
+		gen_graph = False
+else:
+	gen_graph = None
+gen_graph = comm.bcast(gen_graph,root=0)
 comm.Barrier()
 
-iscore_graph_mpi(outdir=args.graph,rank=rank,size=size,mpi_comm=comm)
+if gen_graph:
+	iscore_graph_mpi(outdir=args.graph,rank=rank,size=size,mpi_comm=comm)
 
-# compute the kernels
+# see if the kernels are there
 if rank == 0:
 	if not os.path.isdir(args.kernel):
 		os.mkdir(args.kernel)
-
+		gen_kernel = True
+	else:
+		gen_kernel = False
+else:
+	gen_kernel = None
+gen_kernel = comm.bcast(gen_kernel,root=0)
 comm.Barrier()
 
-kfile = os.path.join(args.kernel,'kernel.pckl')
-iscore_kernel_mpi(test_graph=args.graph,train_archive=args.archive,outfile=kfile,rank=rank,size=size)
-
+if gen_kernel:
+	kfile = os.path.join(args.kernel,'kernel.pckl')
+	iscore_kernel_mpi(test_graph=args.graph,train_archive=args.archive,outfile=kfile,rank=rank,size=size)
 comm.Barrier()
 
 # predcit the model
 if rank == 0:
+
 	iscore_svm(load_model=None,package_name=args.archive,testID=args.ground_truth)
 
 	# add energy terms
