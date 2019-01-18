@@ -33,7 +33,7 @@ class Kernel(object):
 
     def __init__(self,testIDs='testID.lst',trainIDs='trainID.lst',
                  test_graph='./graph/',train_graph='./graph/',
-                 train_archive=None,
+                 train_archive=None, debug=False,
                  gpu_block=(8,8,1),method='vect'):
 
         """Compute the kernels of graph pairs.
@@ -69,6 +69,7 @@ class Kernel(object):
         self.gpu_block = gpu_block
         self.method = method
         self.train_archive=train_archive
+        self.debug=debug
 
         # the cuda kernel
         self.kernel = os.path.dirname(os.path.abspath(__file__)) + '/cuda/cuda_kernel.cu'
@@ -246,7 +247,8 @@ class Kernel(object):
             n_edges_prod = 2*n1*n2
             self.weight_product = gpuarray.zeros(n_edges_prod, np.float32)
             self.index_product = gpuarray.zeros((n_edges_prod,2), np.int32)
-            print('GPU - Mem  : %f' %(time()-t0))
+            if self.debug:
+                print('GPU - Mem  : %f' %(time()-t0))
 
         # store the parametres
         K = {}
@@ -306,9 +308,10 @@ class Kernel(object):
                 n2 = os.path.splitext(name2)[0]
                 K[(n1,n2)] = self.compute_K(lamb=lamb,walk=walk)
 
-                print('Total      : %f' %(time()-t0))
-                print('-'*20)
-                print('K      :  ' + '  '.join(list(map(lambda x: '{:1.3}'.format(x),K[(n1,n2)]))))
+                if self.debug:
+                    print('Total      : %f' %(time()-t0))
+                    print('-'*20)
+                    print('K      :  ' + '  '.join(list(map(lambda x: '{:1.3}'.format(x),K[(n1,n2)]))))
 
                 # print the check if present
                 if check is not None:
@@ -357,8 +360,8 @@ class Kernel(object):
         for i in range(1,walk+1):
             K[i] = K[i-1] + lamb**i * np.sum(pW*self.px)
             pW = self.Wx.dot(pW)
-
-        print('CPU - K    : %f' %(time()-t0))
+        if self.debug:
+            print('CPU - K    : %f' %(time()-t0))
         return K
 
     ##############################################################
@@ -424,7 +427,8 @@ class Kernel(object):
             self.Wx = sp_sparse.coo_matrix( (weight,index),shape=( n_nodes_prod,n_nodes_prod ) )
             self.Wx += self.Wx.transpose()
 
-        print('CPU - Kron : %f' %(time()-t0))
+        if self.debug:
+            print('CPU - Kron : %f' %(time()-t0))
 
     def compute_px(self,g1,g2,cutoff=0.5):
         """Calculation of the Px vector from the nodes info.
@@ -437,7 +441,9 @@ class Kernel(object):
         t0 = time()
         #n1,n2 = g1.num_nodes,g2.num_nodes
         self.px = [t[0]*t[1] if (float(t[0])>cutoff or float(t[1])>cutoff) else 0 for t in itertools.product(*[g1.nodes_info_data,g2.nodes_info_data])]
-        print('CPU - Px   : %f' %(time()-t0))
+        
+        if self.debug:
+            print('CPU - Px   : %f' %(time()-t0))
 
     def compute_W0(self,g1,g2,method='vect'):
         """Calculation of t W0 vector from the nodes pssm similarity
@@ -462,7 +468,8 @@ class Kernel(object):
         else:
             raise ValueError('Method %s not recognized' %self.method)
 
-        print('CPU - W0   : %f' %(time()-t0))
+        if self.debug:
+            print('CPU - W0   : %f' %(time()-t0))
 
     @staticmethod
     def _combvec(a1,a2,axis=0):
@@ -626,7 +633,8 @@ class Kernel(object):
         # create the matrix
         self.Wx = sp_sparse.coo_matrix( (weight,index),shape=( n_nodes_prod,n_nodes_prod ) )
 
-        print('GPU - Kron : %f' %(time()-t0))
+        if self.debug:
+            print('GPU - Kron : %f' %(time()-t0))
 
 
     @staticmethod
@@ -666,7 +674,8 @@ class Kernel(object):
         t0 = time()
         kernel_code = open(self.kernel, 'r').read()
         self.mod = compiler.SourceModule(kernel_code)
-        print('GPU - Kern : %f' %(time()-t0))
+        if self.debug:
+            print('GPU - Kern : %f' %(time()-t0))
 
     def compute_kron_mat_cuda(self,g1,g2,kernel_name='create_kron_mat',gpu_block=None): # pragma: no cover
         """kronecker matrix with the edges pssm
@@ -710,7 +719,8 @@ class Kernel(object):
             self.index_product = gpuarray.zeros((n_edges_prod,2), np.int32)
 
         driver.Context.synchronize()
-        print('GPU - Mem  : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
+        if self.debug:
+            print('GPU - Mem  : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
 
         # use the combvec kernel
         t0 = time()
@@ -740,7 +750,8 @@ class Kernel(object):
 
 
         #driver.Context.synchronize()
-        print('GPU - Kron : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
+        if self.debug:
+            print('GPU - Kron : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
 
     def compute_px_cuda(self,g1,g2,gpu_block=None): # pragma: no cover
         """Calculation of the PX vector.
@@ -770,7 +781,8 @@ class Kernel(object):
         create_p_vect(info1,info2,pvect,g1.num_nodes,g2.num_nodes,block=block,grid=grid)
         self.px = pvect.get()
         driver.Context.synchronize()
-        print('GPU - Px   : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
+        if self.debug:
+            print('GPU - Px   : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
 
     def compute_W0_cuda(self,g1,g2,gpu_block=None): # pragma: no cover
         """Calculation of the W0 matrix from the nodes pssm.
@@ -799,7 +811,8 @@ class Kernel(object):
         compute(pssm1,pssm2,w0,g1.num_nodes,g2.num_nodes,block=block,grid=grid)
         self.W0 = w0.get()
         driver.Context.synchronize()
-        print('GPU - W0   : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
+        if self.debug:
+            print('GPU - W0   : %f \t (block size:%dx%d)' %(time()-t0,block[0],block[1]))
 
     def tune_kernel(self,func='create_kron_mat',test_all_func=False): # pragma: no cover
         """Method to tune the kernel using the KernelTuner
