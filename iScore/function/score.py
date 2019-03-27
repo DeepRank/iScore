@@ -1,6 +1,6 @@
 import os
 import numpy as np
-
+from scipy.stats import iqr
 class iscore(object):
 
     def __init__(self,graphrank_out='GraphRank.dat', energy_out='Energy.dat',
@@ -60,6 +60,11 @@ class iscore(object):
             for m in mol:
                 self.features[m]['grank'] = data[i]
                 i+= 1
+
+    @staticmethod
+    def _normalize(data):
+        data = np.array(data)
+        return (data-np.median(data))/iqr(data)
 
     def score(self):
         """compute and output the iScore."""
