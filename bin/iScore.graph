@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os
-from iScore.graph import iscore_graph
+from iScore.graphrank.graph import iscore_graph
 import argparse
 
 #################################################################
@@ -16,10 +16,16 @@ parser.add_argument('--pssm_path', type = str, default='./pssm',help='path where
 parser.add_argument('--select', type = str, default=None, help='File containing the name of the pdb to process')
 parser.add_argument('--outdir',type = str, default='./graph/',help='Directory where to store the graphs')
 parser.add_argument('--not_aligned',action='store_true',help='PSSM and PDB are NOT aligned')
+parser.add_argument('--hdf5',action="store_true",help='store the graphs in a hdf5 file')
 args = parser.parse_args()
 
 aligned = not args.not_aligned
-iscore_graph(pdb_path=args.pdb_path, pssm_path=args.pssm_path, select=args.select, outdir=args.outdir, aligned=aligned)
+iscore_graph(pdb_path=args.pdb_path,
+	         pssm_path=args.pssm_path,
+	         select=args.select,
+	         outdir=args.outdir,
+	         export_hdf5=args.hdf5,
+	         aligned=aligned)
 
 
 

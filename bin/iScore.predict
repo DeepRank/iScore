@@ -32,13 +32,16 @@ parser.add_argument('--archive',default='training_set.tar.gz',help='model archiv
 # archive model to use
 parser.add_argument('--energy',default='haddock',help='energy terms : None or haddock(default)')
 
+# archive model to use
+parser.add_argument('--hdf5',action="store_true",help='store the graphs in a hdf5 file')
+
 # get the args
 args = parser.parse_args()
 
 # create the graphss
 if not os.path.isdir(args.graph):
     os.mkdir(args.graph)
-    iscore_graph(outdir=args.graph)
+    iscore_graph(outdir=args.graph,export_hdf5=args.hdf5)
 else:
     print('Reusing graphs in %s' %(args.graph))
 
