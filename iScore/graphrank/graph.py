@@ -773,6 +773,10 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
 
         # get the pssm files
         mol_pssm = list(filter(lambda x : x.startswith(mol_name) and x.endswith('.pdb.pssm'),all_pssm_files))
+        if len(mol_pssm) == 0:
+            print('--> Assuming global naming scheme for pssm files')
+            mol_pssm = list(filter(lambda x : x.startswith(mol_name.split('_')[0]) and x.endswith('.pdb.pssm'),all_pssm_files))
+            
         mol_pssm.sort()
         chain_label = [m.split('.')[-3] for m in mol_pssm]
 
