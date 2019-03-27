@@ -6,6 +6,7 @@ import h5py
 from pdb2sql.pdb2sqlcore import pdb2sql
 from pdb2sql.interface import interface
 from Bio import pairwise2
+import warnings
 
 class Graph(object):
 
@@ -483,14 +484,16 @@ class GenGraph():
             if res[2] not in self.resmap_inv:
                 keys_to_pop.append(res)
                 #res_contact_pairs.pop(res,None)
-                Warning('--> Residue ',res,' not valid')
+                print(res)
+                warnings.warn('--> Residue not valid')
 
         # tag the ones that are not in PSSM
         for res in list(res_contact_pairs.keys()):
             if res not in self.aligned_pssm:
                 keys_to_pop.append(res)
                 #res_contact_pairs.pop(res,None)
-                Warning('--> Residue ',res,' not found in PSSM file')
+                print(res)
+                warnings.warn('--> Residue not found in PSSM file')
 
         # Remove the residue
         for res in keys_to_pop:
@@ -508,7 +511,8 @@ class GenGraph():
                     nodesB += [res]
                     tmp_reslist += [res]
                 else:
-                    Warning('--> Residue ',res,' not found in PSSM file or Residue not recognized')
+                    print(res)
+                    warnings.warn('--> Residue not found in PSSM file or Residue not recognized')
             res_contact_pairs[k] = tmp_reslist
 
         nodesB = sorted(set(nodesB))
@@ -776,7 +780,7 @@ def iscore_graph_mpi(pdb_path='./pdb/',pssm_path='./pssm/',select=None,
         if len(mol_pssm) == 0:
             print('--> Assuming global naming scheme for pssm files')
             mol_pssm = list(filter(lambda x : x.startswith(mol_name.split('_')[0]) and x.endswith('.pdb.pssm'),all_pssm_files))
-            
+
         mol_pssm.sort()
         chain_label = [m.split('.')[-3] for m in mol_pssm]
 
