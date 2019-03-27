@@ -13,7 +13,7 @@ class iscore(object):
         self.features = dict()
 
         self.read_energy()
-        self.read_graphrank()
+        self.read_graphrank(normalize=True)
         self.score()
         self.print()
 
@@ -33,7 +33,7 @@ class iscore(object):
             self.features[mol]['ec'] = float(clb)
             self.features[mol]['edesolv'] = float(des)
 
-    def read_graphrank(self):
+    def read_graphrank(self,normalize=True):
         """Read the graph rank output file."""
 
         with open(self.graphrank_out,'r') as f:
@@ -46,6 +46,21 @@ class iscore(object):
                 self.features[mol] = dict()
             self.features[mol]['grank'] = float(l[-1])
 
+        if normalize:
+
+            data = []
+            mol = self.features.keys()
+
+            for m in mol:
+                data.append(self.features[m]['grank'])
+
+            data = self._normalize(data)
+
+            i = 0
+            for m in mol:
+                self.features[m]['grank'] = data[i]
+                i+= 1
+
     def score(self):
         """compute and output the iScore."""
 
@@ -53,6 +68,7 @@ class iscore(object):
 
             if all( k in feat for k in ['grank','evdw','ec','edesolv']):
                 data = [feat['grank'],feat['evdw'],feat['ec'],feat['edesolv']]
+
                 self.features[mol]['iscore'] = self._scoring_function(data,self.weights)
             else:
                 print('Data missing for mol %s. Molecule excluded from scoring' %mol)
