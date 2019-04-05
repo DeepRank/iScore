@@ -100,8 +100,9 @@ class Plot(object):
         index = np.argsort(values)
 
         # revert if necessary
-        if data == 'GraphRank':
-            index = index[::-1]
+        if data.endswith("GraphRank"):
+              index = index[::-1]
+
 
         #sort the data
         values = values[index]
