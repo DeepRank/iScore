@@ -23,6 +23,9 @@ parser.add_argument('--graph',default='./graph/',type=str,help='Graph pickle fil
 
 parser.add_argument('--archive',default='training_set.tar.gz', type = str, help='name of the achive')
 
+# maximum walk length
+parser.add_argument('--walk',default=4, type=int, help='maximum walk length')
+
 # get the args
 args = parser.parse_args()
 
@@ -49,7 +52,7 @@ if rank == 0:
 
 comm.Barrier()
 kfile = os.path.join(args.kernel,'kernel.pckl')
-iscore_kernel_mpi(outfile=kfile,rank=rank,size=size)
+iscore_kernel_mpi(outfile=kfile,walk=args.walk,rank=rank,size=size)
 
 comm.Barrier()
 
