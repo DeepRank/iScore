@@ -14,7 +14,7 @@ class iscore(object):
         self.features = dict()
 
         self.read_energy()
-        self.read_graphrank(normalize=True)
+        self.read_graphrank()
         self.score()
         self.print()
 
