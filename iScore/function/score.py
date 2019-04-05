@@ -4,11 +4,12 @@ from scipy.stats import iqr
 class iscore(object):
 
     def __init__(self,graphrank_out='GraphRank.dat', energy_out='Energy.dat',
-                 weights = [-0.941,0.041,0.217,0.032]):
+                 weights = [-0.941,0.041,0.217,0.032],normalize_graph_rank = True):
 
         self.graphrank_out = graphrank_out
         self.energy_out = energy_out
         self.weights = weights
+        self.normalize_graph_rank = normalize_graph_rank
 
         self.features = dict()
 
@@ -33,7 +34,7 @@ class iscore(object):
             self.features[mol]['ec'] = float(clb)
             self.features[mol]['edesolv'] = float(des)
 
-    def read_graphrank(self,normalize=True):
+    def read_graphrank(self):
         """Read the graph rank output file."""
 
         with open(self.graphrank_out,'r') as f:
@@ -46,7 +47,7 @@ class iscore(object):
                 self.features[mol] = dict()
             self.features[mol]['grank'] = float(l[-1])
 
-        if normalize:
+        if self.normalize_graph_rank:
 
             data = []
             mol = self.features.keys()
@@ -83,7 +84,10 @@ class iscore(object):
 
         fname='iScorePredict.dat'
         f = open(fname,'w')
-        f.write('{:10} {:>14}     {:>14}     {:>14}     {:>14}     {:>14}\n'.format('#Name','GraphRank','nEVDW','nEC','nEDESOLV','iScore'))
+        if self.normalize_graph_rank:
+            f.write('{:10} {:>14}     {:>14}     {:>14}     {:>14}     {:>14}\n'.format('#Name','nGraphRank','nEVDW','nEC','nEDESOLV','iScore'))
+        else:
+            f.write('{:10} {:>14}     {:>14}     {:>14}     {:>14}     {:>14}\n'.format('#Name','GraphRank','nEVDW','nEC','nEDESOLV','iScore'))
         for name,feat in  self.features.items():
             st = "{:10} {: 14.3f}     {: 14.3f}     {: 14.3f}     {: 14.3f}     {: 14.3f}\n"
             if all( k in feat for k in ['grank','evdw','ec','edesolv','iscore']):

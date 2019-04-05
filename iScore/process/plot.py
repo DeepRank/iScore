@@ -117,3 +117,12 @@ class Plot(object):
         else:
             raise ValueError('Only possible reference is CAPRI for the moment')
 
+
+    def get_score(self,name):
+
+        names = self.data.keys()
+        score = []
+        for n in names:
+            score.append(self.data[n][name])
+            
+        return np.array(score)

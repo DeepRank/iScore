@@ -181,7 +181,8 @@ class SVM(object):
             kdata.append([i+1]+k)
 
         prob = svm_problem(self.trainDataSet.train_class,kdata,isKernel=True)
-        param = svm_parameter('-t 4 -c 4 -b 1')
+        #param = svm_parameter('-t 4 -c 4 -b 1')
+        param = svm_parameter('-t 4')
         self.model = svm_train(prob,param)
         self.mode_file_name = model_file_name
 
