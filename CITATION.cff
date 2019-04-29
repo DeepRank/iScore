@@ -1,0 +1,34 @@
+# YAML 1.2
+---
+abstract: "iScore allows to score protein-protein interface using graph kernels of the contact residue interface and support vector machine. "
+authors:
+  -
+    affiliation: "Netherlands eScience Center"
+    family-names: Renaud
+    given-names: Nicolas
+
+  -
+    affiliation: "Bijvoet Center for Biomolecular Research, Faculty of Science - Chemistry, Utrecht University"
+    family-names: Geng
+    given-names: Cunliang
+  -
+    affiliation: "Bijvoet Center for Biomolecular Research, Faculty of Science - Chemistry, Utrecht University"
+    family-names: Xue
+    given-names: Li
+
+
+cff-version: "0.2.0"
+date-released: 2019-04-15
+doi: "10.5281/zenodo.2630567"
+keywords:
+  - "protein-protein interface scoring"
+  - "support vector machine"
+  - "graph kernel"
+
+license: "Apache-2.0"
+message: "If you use this software, please cite it using these metadata."
+title: "iScore : Supprt Vector Machine and Graph Kernel for Protein Interface Scoring"
+version: "0.2.0"
+...
+
+
