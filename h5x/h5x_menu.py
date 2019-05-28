@@ -13,8 +13,7 @@ def context_menu(self, treeview, position):
         data = get_group_data(get_current_hdf5_group(self,item))
 
         if data is None:
-            list_operations = ['Print attrs','tSNE Graph', '3D Plot']
-            list_sub = [[],['Louvain', 'MCL'],[]]
+            list_operations = ['Print attrs', '3D Plot']
 
         elif data.ndim == 1:
             list_operations = ['Print attrs','-','Plot Hist', 'Plot Line']
@@ -25,8 +24,8 @@ def context_menu(self, treeview, position):
         else:
             list_operations = ['Print attrs']
 
-        #action,actions = get_actions(treeview,position,list_operations)
-        action, actions = get_multilevel_actions(treeview,position,list_operations,list_sub)
+        action,actions = get_actions(treeview,position,list_operations)
+        #action, actions = get_multilevel_actions(treeview,position,list_operations,list_sub)
 
         if action == actions['Print attrs']:
             send_dict_to_console(self,item,treeview)
@@ -42,28 +41,6 @@ def context_menu(self, treeview, position):
         if 'Plot Map' in actions:
             if action == actions['Plot Map']:
                 plot2d(self,item,treeview)
-
-        if ('tSNE Graph','Louvain') in actions:
-            if action == actions[('tSNE Graph','Louvain')]:
-
-                grp = get_current_hdf5_group(self,item)
-                data_dict = {'_grp':grp}
-                treeview.emitDict.emit(data_dict)
-
-                # cmd = "tsne_graph(_grp,'louvain')"
-                # data_dict = {'exec_cmd':cmd}
-                # treeview.emitDict.emit(data_dict)
-
-        if ('tSNE Graph', 'MCL') in actions:
-            if action == actions[('tSNE Graph', 'MCL')]:
-
-                grp = get_current_hdf5_group(self,item)
-                data_dict = {'_grp':grp}
-                treeview.emitDict.emit(data_dict)
-
-                # cmd = "tsne_graph(_grp,'mcl')"
-                # data_dict = {'exec_cmd':cmd}
-                # treeview.emitDict.emit(data_dict)
 
         if '3D Plot' in actions:
             if action == actions['3D Plot']:
