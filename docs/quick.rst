@@ -5,7 +5,7 @@ iScore is most easily used via a set of binaries that are located in the directo
 
 We therefore recomend to have the following file arborescence:
 
-```
+::
 root/
  |__train/
  |    |__pdb/
@@ -15,7 +15,7 @@ root/
       |__pdb/
       |__pssm/
       |__caseID.lst (optional)
-```
+::
 
 The subfolders are ``train/pdb/`` and ``train/pssm/`` contains the pdb and pssm files we want to use to create a training set. The PSSM files can be obtained via a dedicated Python module `PSSMGen` (see section 'Computing PSSM Files'). To train a SVM model on these conformation simply go in the ``train`` subfolder and use the `iScore.train` binary:
 
