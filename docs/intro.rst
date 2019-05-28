@@ -5,9 +5,12 @@ Introduction
 
 **Support Vector Machine on Graph Kernels for Protein-Protein Docking Scoring**
 
-iScore uses support vector machine to classify protein-protein interfaces in enar natives and non-near natives. To this purpose, each interface is encoded in a graph where each node corresponds to the Position Specific Similarity Matrix (PSSM) of a given residue. The nodes can be connected if they participate in a contact between the two different proteins.
+The software supports the publication of the following articles:
+C. Geng *et al.*, *iScore: A novel graph kernel-based function for scoring protein-protein docking models*, bioRxiv 2018,  https://doi.org/10.1101/498584
 
-The graph of a given conformation is then used to computeits kernel with a training set of carefully chosen conforations representing near native and decoys. A support vector machine is then adopted to predict if the conformation under scrutiny is near native or not.
+iScore uses support vector machine to classify protein-protein interfaces in near natives and non-near natives classes. To this purpose, each interface is encoded in a connection graph where each node corresponds to the Position Specific Similarity Matrix (PSSM) of a given residue. The nodes are connected by an edge if they participate in a contact between two different proteins.
+
+The graph of a given conformation is then used to compute its kernel with a training set of carefully chosen conformations representing near native and decoys. A support vector machine is then adopted to predict if the conformation under scrutiny is near native or not.
 
 Installation
 -------------------------------
