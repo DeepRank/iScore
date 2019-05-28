@@ -11,6 +11,8 @@
 
 <https://iscoredoc.readthedocs.io/en/latest/>
 
+![alt text](./image/workflow.png)
+
 iScore offers simple solutions to classify protein-protein interfaces using a support vector machine approach on graph kernels. The simplest way to use iScore is through dedicated binaries that hide the complexity of the approach and allows access to the code with simple command line interfaces. The two binaries are `iscore.train` and `iscore.predict` that respectively train a model using a trainging set and use this model to predict the near-native character of unkown conformations.
 
 To use these binaries easily the following file structure is advised :
