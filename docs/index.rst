@@ -11,12 +11,11 @@ Welcome to iScore's documentation!
    :caption: Contents:
 
    intro
-   quick
+   install
+   workflow
    pssm
    graph
-   gpu
-   svm
-   workflow
+   viz
    doc
 
 Indices and tables
