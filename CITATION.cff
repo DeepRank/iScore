@@ -27,7 +27,7 @@ keywords:
 
 license: "Apache-2.0"
 message: "If you use this software, please cite it using these metadata."
-title: "iScore : Supprt Vector Machine and Graph Kernel for Protein Interface Scoring"
+title: "iScore : Support Vector Machine and Graph Kernel for Protein Interface Scoring"
 version: "0.2.0"
 ...
 
