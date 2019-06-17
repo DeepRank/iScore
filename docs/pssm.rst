@@ -7,9 +7,9 @@ As a preprocessing step the user must compute the PSSM files corespondng to the 
 iScore contains a wrapper that allows to compute the PSSM data, map them to the PDB files and format them for further processing. The only input needed is the PDB file of the decoy. To compute the PSSM file one can simply use :
 
 
->>> from iscore.pssm.pssm import PSSM
+>>> from iScore.pssm.pssm import PSSM
 >>>
->>> gen = PSSM('1AK4')
+>>> gen = PSSM(caseID = '1AK4', pdb_dir ='1AK4/pdb')
 >>>
 >>> # generates the FASTA query
 >>> gen.get_fasta()
