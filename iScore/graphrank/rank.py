@@ -17,7 +17,7 @@ class DataSet(object):
             trainID (str or list): comformation ID for the training set. if str it should be the dir where the graphs are stored
             Kfile (TYPE): File name containig th K matrix
             maxlen (TYPE): maximu wlak length for the kernel calculations
-            testID (None, optional): comformation ID for the test set. if str it should be the dir where the graphs are stored
+            testID (None, optional): conformation ID for the test set. if str it should be the dir where the graphs are stored
         """
         self.train_name, self.train_class = self._get_ids(trainID)
 

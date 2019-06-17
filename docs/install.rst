@@ -28,8 +28,8 @@ The code is written in Python3. Several packages are required to run the code bu
 
   * Biopython
 
-  * libsvm
-
   * mpi4py
 
-  * pdb2sql
+  * libsvm (https://github.com/cjlin1/libsvm/tree/master/python)
+
+  * pdb2sql(https://github.com/DeepRank/pdb2sql)

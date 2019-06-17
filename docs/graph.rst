@@ -6,7 +6,7 @@ Generating the Graphs :
 ----------------------------
 
 
-The first step in iSCore is to generate the connections graph of the itnerface. In this graph each node is represented by the PSSM of a residue. The nodes are connected if they form a contact pair between the two proteins.
+The first step in iScore is to generate the bipartite graph of the interface. In this graph each node is represented by the PSSM profile of a residue. The nodes are connected if they form a contact pair between the two proteins.
 
 To create the graph one needs the PDB file of the interface and the two PSSM files (one for each chain) created by the PSSMGen tool. To generate the graph simply use :
 
