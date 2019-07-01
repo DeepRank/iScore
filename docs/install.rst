@@ -17,19 +17,20 @@ Test the installation
 To test the module go to the test folder ``cd ./test`` and execute the following test : ``pytest``
 
 These tests are automatically run on Travis CI at each new push.
-So if the build button display passing they should work !
+So if the build button display passing they should work ! (Yong: I am not sure what this sentence means)
 
-Requiried Dependencies
+
+Required packages for dependencies
 ------------------------
 
-The code is written in Python3. Several packages are required to run the code but most are pretty standard. Here is an non-exhaustive list of dependencies
+The code is written in Python3. Several packages are required to run the code. Here is a list of their dependencies.
 
   * Numpy
 
   * Biopython
 
-  * libsvm
-
   * mpi4py
 
-  * pdb2sql
+  * libsvm (https://github.com/cjlin1/libsvm/tree/master/python)
+
+  * pdb2sql (https://github.com/DeepRank/pdb2sql)

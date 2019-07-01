@@ -1,7 +1,7 @@
 Documentation
 **************
 
-All the prototypes of the class/methods are here specified
+All prototypes of the class/methods used here are specified.
 
 .. toctree::
    :maxdepth: 4

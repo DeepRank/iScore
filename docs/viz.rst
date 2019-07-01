@@ -1,7 +1,7 @@
 Visualizing the connection graphs
 ======================================
 
-iSore allows to easily visualize the connection graphs using the HDF5 browser provided with the software and pymol. First the connections graphs must be stored in a HDF5 file. To do that simply generate the graphs as following:
+iScore allows to easily visualize the bipartite graphs using the HDF5 browser provided by the software and pymol. First, the bipartite graphs must be stored in the format of a HDF5 file. To do so, the graphs can be processed to fit in HDF5 file format as follows:
 
 
 >>> from iScore.graphrank.graph import iscore_graph
@@ -9,12 +9,12 @@ iSore allows to easily visualize the connection graphs using the HDF5 browser pr
 >>>              pssm_path=<pssm_path>,
 >>>              export_hdf5=True)
 
-where you have to specify the folder containing the PDB files abd PSSM files in pdb_path and pssm_path. By default this are simply ``./pdb/`` and ``./pssm/``. The script above will create a HDF5 file containing the graph.
+where you have to specify the folder containing the PDB files and PSSM files in ``pdb_path`` and ``pssm_path``. By default, these are set as ``./pdb/`` and ``./pssm/``. The script above creates a HDF5 file containing the graphs.
 
-This HDF5 cile can be explored using the the dedicated HDF5 browser. Go to the ``./h5x/`` folder and type:
+The generated HDF5 file can be opened using the HDF5 browser. To open the HDF5 file in the HDF5 browser, please go to the ``./h5x/`` folder and type:
 
 ``./h5x.py``
 
-This will open the hdf5 browser. You can open a hdf5 file by clicking on the file icon in the bottom  left of the browser. Once opened, you will see the content of the file in the browser. Right-click on the name of a conformation and choose ``3D Plot``. This will open PyMol and allow you to visualize the connecton graph
+You can open a HDF5 file by clicking on the file icon in the bottom left of the browser. Once it is opened, you can see the content of the file in the browser. Right-click on the name of a conformation and choose ``3D Plot``. This will open PyMol and allow you to visualize the bipartite graph
 
 .. image :: h5x_iscore.png
