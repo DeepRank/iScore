@@ -17,7 +17,7 @@ with open('README.md') as readme_file:
 setup(
     name='iScore',
     version=version['__version__'],
-    description="SVM Graph Kernels for Protein Interface Scoring",
+    description="Scoring protein-protein interface using RWGK and SVM",
     long_description=readme + '\n\n',
     long_description_content_type='text/markdown',
     author=["Nicolas Renaud", "Cunliang Geng, Li Xue"],
@@ -29,12 +29,18 @@ setup(
     license="Apache Software License 2.0",
     zip_safe=False,
     keywords='iScore',
+    scripts=['bin/iScore.graph','bin/iScore.graph.mpi',
+             'bin/iScore.kernel','bin/iScore.kernel.mpi',
+             'bin/iScore.predict','bin/iScore.predict.mpi',
+             'bin/iScore.train','bin/iScore.train.mpi',
+             'bin/iScore.svm',
+             'bin/iScore.h5x'],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
-        'intended audience :: Science/Research',
+        'Intended Audience :: Science/Research',
         'Programming Language :: Python :: 3.7',
         'Topic :: Scientific/Engineering :: Bio-Informatics'
     ],
