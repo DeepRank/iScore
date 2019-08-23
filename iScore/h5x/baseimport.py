@@ -5,26 +5,6 @@ import subprocess as sp
 
 from pdb2sql.pdb2sqlcore import pdb2sql
 
-# def tsne_graph(grp,method):
-
-#     import plotly.offline as py
-#     py.init_notebook_mode(connected=True)
-
-#     g = Graph()
-#     g.h52nx(None,None,molgrp=grp)
-#     g.plotly_2d(offline=True,iplot=False,method=method)
-
-
-
-# def graph3d(grp):
-
-#     import plotly.offline as py
-#     py.init_notebook_mode(connected=True)
-
-#     g = Graph()
-#     g.h52nx(None,None,molgrp=grp)
-#     g.plotly_3d(offline=True,iplot=False)
-
 
 def launchPyMol(grp):
 

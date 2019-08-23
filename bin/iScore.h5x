@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+import os
+import iScore
+from iScore.h5x.menu import context_menu
+from h5xplorer.h5xplorer import h5xplorer
+
+
+path = os.path.dirname(os.path.abspath(iScore.__file__))
+baseimport = path + '/h5x/baseimport.py'
+app = h5xplorer(context_menu,baseimport=baseimport,extended_selection=False)
