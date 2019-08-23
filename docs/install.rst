@@ -1,7 +1,17 @@
 Installation
 ==============================
 
-The code is hosted on Github_ (https://github.com/DeepRank/iScore)
+Install via pip
+-------------------
+
+In most cases you can use pip to install iScore. Simply use:
+
+`pip install iScore`
+
+Install from source
+-------------------
+
+If the pip install fails or if you want to modify the code you can install iScore manually. The code is hosted on Github_ (https://github.com/DeepRank/iScore)
 
 .. _Github: https://github.com/DeepRank/iScore
 
@@ -11,25 +21,8 @@ To install the code
  * go there ``cd iScore``
  * install the module ``pip install -e ./``
 
-Test the installation
-----------------------
-
 To test the module go to the test folder ``cd ./test`` and execute the following test : ``pytest``
 
-These tests are automatically run on Travis CI at each new push.
-So if the build button display passing they should work !
 
-Requiried Dependencies
-------------------------
 
-The code is written in Python3. Several packages are required to run the code but most are pretty standard. Here is an non-exhaustive list of dependencies
 
-  * Numpy
-
-  * Biopython
-
-  * libsvm
-
-  * mpi4py
-
-  * pdb2sql
