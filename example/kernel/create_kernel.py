@@ -3,7 +3,7 @@ from iScore.graphrank.graph import Graph, iscore_graph
 from iScore.graphrank.kernel import Kernel
 
 # create all the graphs of the pdb in ./pdb/
-iscore_graph()
+iscore_graph(export_hdf5=True)
 
 # comapre the graphs with the ones obtained
 # with the matlab version
