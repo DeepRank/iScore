@@ -19,41 +19,11 @@ before_install:
   # Useful for debugging any issues with conda
   - conda info -a
 
-  # pytest
-  #- conda install -c anaconda pytest
-  #- conda install -c conda-forge pytest-cov
-
   # codacy-coverage
   - pip install -q --upgrade pip
-  #- pip install -q coverage
-  #- pip install -q codacy-coverage
-  #- pip install -q coveralls
-
-  # biopython
-  #- conda install -c anaconda biopython
-
+  
   # install mpi4py
   - sudo apt-get install libopenmpi-dev openmpi-bin
-  #- pip install mpi4py
-
-  # libsvm
-  #- bash install-libsvm.sh
-  #- export PYTHONPATH="$PYTHONPATH:$PWD/libsvm-323/python"
-  #- conda install -c conda-forge libsvm
-  #- sudo apt-get install python-libsvm
-
-  # install pdb2sql
-  #- pip install numpy
-  #- pip install scipy
-  - sudo apt-get install git
-  - bash install-pdb2sql.sh
-  #- pip install --index-url https://test.pypi.org/simple/ pdb2sql
-
-  # install matplotlib
-  #- pip install matplotlib
-
-  # install h5py
-  #- conda install h5py
 
 install:
   - pip install -qe .[test]
