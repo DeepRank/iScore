@@ -8,7 +8,9 @@ from pdb2sql.pdb2sqlcore import pdb2sql
 
 def launchPyMol(grp):
 
-    export_path =  '.' + grp.name + '/'
+    cwd = os.getcwd() + '/'
+
+    export_path =  cwd + grp.name + '/'
     if not os.path.isdir(export_path):
         os.mkdir(export_path)
 
@@ -25,21 +27,36 @@ def launchPyMol(grp):
     f.write("# load the molecule\n")
     f.write("pymol.cmd.load('%s','complex')\n" %grp.attrs['pdbfile'])
     f.write("pymol.util.cbc(selection='(all)',first_color=7,quiet=1,legacy=0,_self=pymol.cmd)\n")
-    f.write("pymol.cmd.show('stick','complex')\n\n")
 
     db = pdb2sql(grp.attrs['pdbfile'])
+    contact = []
+    tmp_file = export_path + 'contact_res.pdb'
+
+    for n in grp['nodes']:
+        db.exportpdb(tmp_file,append=True,
+                             chainID=n[0].decode('utf-8'), 
+                             resSeq= n[1].decode('utf-8'), 
+                             resName=n[2].decode('utf-8'))
+
+    f.write("# load the contact\n")
+    f.write("pymol.cmd.load('%s','contacts')\n" %tmp_file   )
+    f.write("pymol.util.cbc(selection='(all)',first_color=7,quiet=1,legacy=0,_self=pymol.cmd)\n")
+    f.write("pymol.cmd.show('stick','complex')\n\n")
 
     nodes  = []
     f.write('graph = [\n')
     for n in grp['nodes']:
-        xyz = db.get('x,y,z',chainID=n[0].decode('utf-8'), resSeq= n[1].decode('utf-8'), resName=n[2].decode('utf-8'))
+        xyz = db.get('x,y,z',chainID=n[0].decode('utf-8'), 
+                             resSeq= n[1].decode('utf-8'), 
+                             resName=n[2].decode('utf-8'))
         xyz = np.mean(xyz,0)
         nodes.append(xyz)
-        if n[0] == b'A':
-            f.write('COLOR, 0, 1, 0, \n')
-        else:
-            f.write('COLOR, 0, 1, 1, \n')
-        f.write('SPHERE, %1.4f, %1.4f, %1.4f, 1.0, \n' %(xyz[0],xyz[1],xyz[2]))
+
+        # if n[0] == b'A':
+        #     f.write('COLOR, 0, 1, 0, \n')
+        # else:
+        #     f.write('COLOR, 0, 1, 1, \n')
+        # f.write('SPHERE, %1.4f, %1.4f, %1.4f, 1.0, \n' %(xyz[0],xyz[1],xyz[2]))
 
 
     f.write('\nBEGIN, LINES,\n')

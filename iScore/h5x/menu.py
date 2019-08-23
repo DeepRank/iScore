@@ -13,7 +13,7 @@ def context_menu(self, treeview, position):
         data = get_group_data(get_current_hdf5_group(self,item))
 
         if data is None:
-            list_operations = ['Print attrs', '3D Plot']
+            list_operations = ['Print attrs', 'PyMol']
 
         elif data.ndim == 1:
             list_operations = ['Print attrs','-','Plot Hist', 'Plot Line']
@@ -42,8 +42,8 @@ def context_menu(self, treeview, position):
             if action == actions['Plot Map']:
                 plot2d(self,item,treeview)
 
-        if '3D Plot' in actions:
-            if action == actions['3D Plot']:
+        if 'PyMol' in actions:
+            if action == actions['PyMol']:
 
                 grp = get_current_hdf5_group(self,item)
                 data_dict = {'_grp':grp}
