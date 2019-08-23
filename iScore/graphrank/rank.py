@@ -5,7 +5,7 @@ from iScore.graphrank.graph import Graph
 import pickle
 import tarfile
 
-from svmutil import *
+from libsvm.svmutil import *
 
 
 class DataSet(object):
