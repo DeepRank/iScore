@@ -534,12 +534,9 @@ class GenGraph():
                 for v in vs:
                     print('\t\t',v)
 
-    def export_graph(self,fname):
-        """Export the graph of a given PDB
 
-        Args:
-            fname (str): file name
-        """
+    def get_graph(self,name=None):
+        """Get the graph"""
         nodes_data,nodes_info = [],[]
         for res in self.nodes:
 
@@ -552,16 +549,28 @@ class GenGraph():
         nodes_data = np.array(nodes_data)
         nodes_info = np.array(nodes_info)
 
-        name = os.path.splitext(fname)[0]
         nodes_pssm = np.array(nodes_data).astype('int')
         nodes_info = np.array(nodes_info).astype('float')
 
         edges = np.array(self.edges)
 
-        graph = Graph(name = name,
+        if name is None:
+            name = os.path.splitext(self.pdbfile)[0]
+            
+        return Graph(name = name,
                       nodes_pssm = nodes_pssm,
                       nodes_info = nodes_info,
                       edges_index = edges)
+
+
+    def export_graph(self,fname):
+        """Export the graph of a given PDB
+
+        Args:
+            fname (str): file name
+        """
+        name = os.path.splitext(fname)[0]
+        graph = self.get_graph(name)
 
         if graph.num_nodes > 0:
             graph.pickle(fname)
