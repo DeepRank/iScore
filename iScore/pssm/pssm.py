@@ -24,7 +24,8 @@ class PSSM(object):
         >>> gen = PSSM('1AK4',pdbdir='water')
         >>>
         >>> # configure the generator
-        >>> gen.configure(blast=<path to blast binary>, database=<path to the blast db>)
+        >>> gen.configure(blast=/home/clgeng/software/blast/bin/psiblast,
+                         database=/data/lixue/DBs/blast_dbs/nr_v20180204/nr)
         >>>
         >>> # generates the FASTA query
         >>> gen.get_fasta()
@@ -111,8 +112,6 @@ class PSSM(object):
         self.db = database
 
     def get_pssm(self,fasta_dir='fasta/',
-                 #blast = '/home/clgeng/software/blast/bin/psiblast',
-                 #db = '/data/lixue/DBs/blast_dbs/nr_v20180204/nr',
                  outdir='pssm_raw/',
                  num_iterations=3,
                  run=True):
