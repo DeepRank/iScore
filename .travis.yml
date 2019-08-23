@@ -45,7 +45,7 @@ before_install:
   # install pdb2sql
   - pip install numpy
   - pip install scipy
-  - sudo apt-get install git-all
+  - sudo apt-get install git
   - bash install-pdb2sql.sh
   #- pip install --index-url https://test.pypi.org/simple/ pdb2sql
 
