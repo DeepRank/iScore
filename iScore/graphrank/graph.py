@@ -3,8 +3,8 @@ import numpy as np
 import scipy.io as spio
 import pickle
 import h5py
-from pdb2sql.pdb2sqlcore import pdb2sql
-from pdb2sql.interface import interface
+from pdb2sql import pdb2sql
+from pdb2sql import interface
 from Bio import pairwise2
 import warnings
 
@@ -301,7 +301,7 @@ class GenGraph():
 
         # pdb file
         self.pdbfile = pdbfile
-        self.pdb = pdb2sql(self.pdbfile,no_extra=True)
+        self.pdb = pdb2sql(self.pdbfile)
 
         # residue name translation dict
         self.resmap = {
@@ -556,7 +556,7 @@ class GenGraph():
 
         if name is None:
             name = os.path.splitext(self.pdbfile)[0]
-            
+
         return Graph(name = name,
                       nodes_pssm = nodes_pssm,
                       nodes_info = nodes_info,

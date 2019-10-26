@@ -3,7 +3,7 @@ import numpy as np
 import os
 import subprocess as sp
 
-from pdb2sql.pdb2sqlcore import pdb2sql
+from pdb2sql import pdb2sql
 
 
 def launchPyMol(grp):
@@ -34,8 +34,8 @@ def launchPyMol(grp):
 
     for n in grp['nodes']:
         db.exportpdb(tmp_file,append=True,
-                             chainID=n[0].decode('utf-8'), 
-                             resSeq= n[1].decode('utf-8'), 
+                             chainID=n[0].decode('utf-8'),
+                             resSeq= n[1].decode('utf-8'),
                              resName=n[2].decode('utf-8'))
 
     f.write("# load the contact\n")
@@ -46,8 +46,8 @@ def launchPyMol(grp):
     nodes  = []
     f.write('graph = [\n')
     for n in grp['nodes']:
-        xyz = db.get('x,y,z',chainID=n[0].decode('utf-8'), 
-                             resSeq= n[1].decode('utf-8'), 
+        xyz = db.get('x,y,z',chainID=n[0].decode('utf-8'),
+                             resSeq= n[1].decode('utf-8'),
                              resName=n[2].decode('utf-8'))
         xyz = np.mean(xyz,0)
         nodes.append(xyz)

@@ -1,6 +1,6 @@
 import os, glob, shutil
 from Bio.Blast.Applications import NcbipsiblastCommandline
-from pdb2sql.pdb2sqlcore import pdb2sql
+from pdb2sql import pdb2sql
 
 from iScore.pssm.map_pssm2pdb import write_mapped_pssm_pdb
 
@@ -236,4 +236,3 @@ class PSSM(object):
             for c in chain:
                 pssm = os.path.join(pssm_dir,pssm_files[c])
                 write_mapped_pssm_pdb(pssm, pdb, c, outdir)
-
