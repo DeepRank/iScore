@@ -11,6 +11,14 @@
 
 ![alt text](./image/workflow.png)
 
+## 1. Installation
+
+Minimal information to install the module
+- Check if command `mpiexec` is available or not in your console. If not, download and install [openmpi](https://www.open-mpi.org/) or [mpich](https://www.mpich.org/).
+- Install iScore using `pip install iScore`
+
+## 2. Tutorial
+
 iScore offers simple solutions to classify protein-protein interfaces using a support vector machine approach on graph kernels. The simplest way to use iScore is through dedicated binaries that hide the complexity of the approach and allows access to the code with simple command line interfaces. The two binaries are `iscore.train` and `iscore.predict` that respectively train a model using a trainging set and use this model to predict the near-native character of unkown conformations.
 
 To use these binaries easily the following file structure is advised :
@@ -40,4 +48,3 @@ mpiexec -n ${NPROC} iScore.predict --archive ../train/training_set.tar.gz
 ```
 
 This binary will output the binary class and decision value of the conformations in the test set in a text file `iScorePredict.txt`.
-
