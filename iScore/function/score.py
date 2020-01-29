@@ -1,6 +1,8 @@
 import os
 import numpy as np
+import warnings
 from scipy.stats import iqr
+
 class iscore(object):
 
     def __init__(self,graphrank_out='GraphRank.dat', energy_out='Energy.dat',
@@ -15,6 +17,7 @@ class iscore(object):
 
         self.read_energy()
         self.read_graphrank()
+        self.check_mol_features()
         self.score()
         self.print()
 
@@ -61,6 +64,16 @@ class iscore(object):
             for m in mol:
                 self.features[m]['grank'] = data[i]
                 i+= 1
+
+    def check_mol_features(self):
+        """Check and remove molecules without enough features"""
+
+        features = set(['evdw', 'ec', 'edesolv', 'grank'])
+        for mol in self.features:
+            mol_feat = set(self.features[mol].keys())
+            if mol_feat != features:
+                del self.features[mol]
+                warnings.warn(f'Molecule {mol} is deleted from scoring due to lacking enough features')
 
     @staticmethod
     def _normalize(data):
