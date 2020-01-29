@@ -6,7 +6,7 @@ from scipy.stats import iqr
 class iscore(object):
 
     def __init__(self,graphrank_out='GraphRank.dat', energy_out='Energy.dat',
-                 weights = [-0.941,0.041,0.217,0.032],normalize_graph_rank = True):
+                 weights = [-0.941,0.041,0.217,0.032], normalize_graph_rank = True):
 
         self.graphrank_out = graphrank_out
         self.energy_out = energy_out
@@ -14,10 +14,13 @@ class iscore(object):
         self.normalize_graph_rank = normalize_graph_rank
 
         self.features = dict()
-        # must read graphrank first and then energy
+        # Read and check, remove problematic molecule
         self.read_graphrank()
         self.read_energy()
         self.check_mol_features()
+
+        if self.normalize_graph_rank:
+            self.normalize_graphrank()
         self.score()
         self.print()
 
@@ -50,20 +53,21 @@ class iscore(object):
                 self.features[mol] = dict()
             self.features[mol]['grank'] = float(l[-1])
 
-        if self.normalize_graph_rank:
+    def normalize_graphrank(self):
+        """Normalize graphRank values"""
 
-            data = []
-            mol = self.features.keys()
+        data = []
+        mol = self.features.keys()
 
-            for m in mol:
-                data.append(self.features[m]['grank'])
+        for m in mol:
+            data.append(self.features[m]['grank'])
 
-            data = self._normalize(data)
+        data = self._normalize(data)
 
-            i = 0
-            for m in mol:
-                self.features[m]['grank'] = data[i]
-                i+= 1
+        i = 0
+        for m in mol:
+            self.features[m]['grank'] = data[i]
+            i+= 1
 
     def check_mol_features(self):
         """Check and remove molecules without enough features"""
