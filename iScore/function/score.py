@@ -14,9 +14,9 @@ class iscore(object):
         self.normalize_graph_rank = normalize_graph_rank
 
         self.features = dict()
-
-        self.read_energy()
+        # must read graphrank first and then energy
         self.read_graphrank()
+        self.read_energy()
         self.check_mol_features()
         self.score()
         self.print()
@@ -69,7 +69,8 @@ class iscore(object):
         """Check and remove molecules without enough features"""
 
         features = set(['evdw', 'ec', 'edesolv', 'grank'])
-        for mol in self.features:
+        mols = list(self.features.keys())
+        for mol in mols:
             mol_feat = set(self.features[mol].keys())
             if mol_feat != features:
                 del self.features[mol]
