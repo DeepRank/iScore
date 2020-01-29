@@ -279,8 +279,8 @@ class InternalEnergy(object):
         """Extend the contact atoms to entire residue where one atom is contacting."""
 
         # extract the data
-        dataA = self.sqldb.get('chainId,resName,resSeq',rowID=self.contact_atoms_A)
-        dataB = self.sqldb.get('chainId,resName,resSeq',rowID=self.contact_atoms_B)
+        dataA = self.sqldb.get('chainID,resName,resSeq',rowID=self.contact_atoms_A)
+        dataB = self.sqldb.get('chainID,resName,resSeq',rowID=self.contact_atoms_B)
 
         # create tuple cause we want to hash through it
         dataA = [tuple(x) for x in dataA]
