@@ -46,9 +46,9 @@ setup(
     ],
     test_suite='tests',
 
-    install_requires=[ 'numpy >= 1.13', 'scipy', 'biopython', 
+    install_requires=[ 'numpy >= 1.13', 'scipy', 'biopython',
                        'mpi4py', 'h5py','matplotlib','libsvm',
-                       'pdb2sql','h5xplorer'],
+                       'pdb2sql', 'pssmgen', 'h5xplorer'],
 
 
     extras_require={
