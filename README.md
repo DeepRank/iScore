@@ -17,34 +17,55 @@ Minimal information to install the module
 - Check if command `mpiexec` is available or not in your console. If not, download and install [openmpi](https://www.open-mpi.org/) or [mpich](https://www.mpich.org/).
 - Install iScore using `pip install iScore`
 
-## 2. Tutorial
+## 2. Documentaion
+
+The documentaion of the pacakge can be found at:
+- https://iscoredoc.readthedocs.io
+
+
+## 3. Quick Examples
 
 iScore offers simple solutions to classify protein-protein interfaces using a support vector machine approach on graph kernels. The simplest way to use iScore is through dedicated binaries that hide the complexity of the approach and allows access to the code with simple command line interfaces. The two binaries are `iscore.train` and `iscore.predict` that respectively train a model using a trainging set and use this model to predict the near-native character of unkown conformations.
 
-To use these binaries easily the following file structure is advised :
+### Requirements for preparing data:
 
-```
-root/
- |__train/
- |    |__ pdb/
- |    |__ pssm/
- |    |__ caseID.lst
- |__predict/
-      |__pdb/
-      |__pssm/
-      |__ caseID.lst (optional)
-```
+ - Use the following file structure
+      ```
+      root/
+      |__train/
+      |    |__ pdb/
+      |    |__ pssm/
+      |    |__ caseID.lst
+      |__predict/
+            |__pdb/
+            |__pssm/
+            |__ caseID.lst (optional)
+      ```
 
-The `train` subdirectory contains the PDB files and the PSSM files of the conformation contained in the training set. The PSSM files can be calculated using PSSMGen <https://github.com/DeepRank/PSSMGen>. To train the model simply go to the `train` subdirectory and type:
+- PDB files and PSSM files must have consistent sequences.
+[PSSMGen](https://github.com/DeepRank/PSSMGen) can be used to get consistent PSSM and PDB files. It is already installed along with iScore. Check [README](https://github.com/DeepRank/PSSMGen) to see how to use it.
+
+### Example 1. Train your own model
+
+To train the model simply go to the `train` subdirectory and type:
 
 ```console
 mpiexec -n ${NPROC} iScore.train
 ```
 
-This binary will generate a archive file called by default `training_set.tar.gz` that contains all the information needed to predict binary classes of a test set using the trained model. To use this model go into the `test` subdirectory and type:
+This binary will generate a archive file called by default `training_set.tar.gz` that contains all the information needed to predict binary classes of a test set using the trained model.
+
+To use this model go into the `test` subdirectory and type:
 
 ```console
 mpiexec -n ${NPROC} iScore.predict --archive ../train/training_set.tar.gz
 ```
 
 This binary will output the binary class and decision value of the conformations in the test set in a text file `iScorePredict.txt`.
+
+      For the predicted iScore values, the lower value, the better quality of the conformation.
+
+
+### Example 2. Use our trained model
+
+We provided a model trained on BM5 data and you can use it directly to score your docking decoys as the `test` step shown in the last item.
