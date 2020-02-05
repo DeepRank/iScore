@@ -49,16 +49,24 @@ iScore offers simple solutions to classify protein-protein interfaces using a su
 
 To train the model simply go to the `train` subdirectory and type:
 
-```console
-mpiexec -n ${NPROC} iScore.train
+```bash
+# Without MPI
+iScore.train
+
+# With MPI
+mpiexec -n ${NPROC} iScore.train.mpi
 ```
 
 This binary will generate a archive file called by default `training_set.tar.gz` that contains all the information needed to predict binary classes of a test set using the trained model.
 
 To use this model go into the `test` subdirectory and type:
 
-```console
-mpiexec -n ${NPROC} iScore.predict --archive ../train/training_set.tar.gz
+```bash
+# Without MPI
+iScore.predict --archive ../train/training_set.tar.gz
+
+# With MPI
+mpiexec -n ${NPROC} iScore.predict.mpi --archive ../train/training_set.tar.gz
 ```
 
 This binary will output the binary class and decision value of the conformations in the test set in a text file `iScorePredict.txt`.
@@ -68,4 +76,17 @@ This binary will output the binary class and decision value of the conformations
 
 ### Example 2. Use our trained model
 
-We provided a model trained on BM5 data and you can use it directly to score your docking decoys as the `test` step shown in the last item.
+You can also directly use our trained model to score your docking conformations. The model we provide is trained on docking benchmark version 5 ([BM5](https://zlab.umassmed.edu/benchmark/)) data, more details see [this paper](https://doi.org/10.1093/bioinformatics/btz496).
+You can find the model `model/training_set.tar.gz` in the package folder.
+
+To use this model go into your `test` subdirectory and type:
+
+```bash
+# Without MPI
+iScore.predict
+
+# With MPI
+mpiexec -n ${NPROC} iScore.predict.mpi
+```
+
+The code will automatcially detect the path of the model.
