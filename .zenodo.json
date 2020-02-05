@@ -1,0 +1,29 @@
+{
+    "creators": [
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Renaud, Nicolas"
+        },
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Geng, Cunliang"
+        },
+        {
+            "affiliation": "Bijvoet Center for Biomolecular Research, Faculty of Science - Chemistry, Utrecht University",
+            "name": "Xue, Li"
+        }
+    ],
+    "description": "iScore allows to score protein-protein interface using graph kernels and support vector machine.",
+    "keywords": [
+        "scoring",
+        "docking",
+        "protein-protein complex",
+        "support vector machine",
+        "graph kernel",
+        "machine learning"
+    ],
+    "license": {
+        "id": "Apache-2.0"
+    },
+    "title": "iScore: Support Vector Machine on Graph Kernel for Ranking Protein-Protein Docking Models"
+}
