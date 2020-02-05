@@ -47,3 +47,5 @@ else:
 
 # train the model
 iscore_svm(train=True,package_model=True,package_name=args.arc,maxlen=args.walk)
+
+

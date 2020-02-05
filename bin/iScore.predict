@@ -9,10 +9,6 @@ from iScore.graphrank.rank import iscore_svm
 from iScore.energetic.energy import iscore_energy
 from iScore.function.score import iscore
 
-# set the default trained model
-pkg_path = os.path.dirname((os.path.dirname(__file__)))
-trained_model = os.path.join(pkg_path, 'model', 'training_set.tar.gz')
-
 ##########################################################################
 # Predict the class of the graphs located by default in ./graph
 # using the trained model stored in the archive file training_set.tar.gz
@@ -31,7 +27,7 @@ parser.add_argument('--kernel',default='./kernel/',type=str,help='Kernel pickle 
 parser.add_argument('--graph',default='./graph/',type=str,help='Graph pickle file to use')
 
 # archive model to use
-parser.add_argument('--archive',default=trained_model,help='model archive we want to use')
+parser.add_argument('--archive',default='training_set.tar.gz',help='model archive we want to use')
 
 # archive model to use
 parser.add_argument('--energy',default='haddock',help='energy terms : None or haddock(default)')
@@ -65,3 +61,6 @@ iscore_energy(method=args.energy)
 
 # # final energy function
 iscore()
+
+
+
