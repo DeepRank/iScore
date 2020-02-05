@@ -19,7 +19,6 @@ iScore.egg-info/
 *.pkl
 *.pckl
 *.dat
-*.tar.gz
 
 #example
 test/kernel/graph/*
