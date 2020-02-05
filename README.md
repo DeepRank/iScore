@@ -50,38 +50,9 @@ iScore offers simple solutions to classify protein-protein interfaces using a su
 - PDB files and PSSM files must have consistent sequences.
 [PSSMGen](https://github.com/DeepRank/PSSMGen) can be used to get consistent PSSM and PDB files. It is already installed along with iScore. Check [README](https://github.com/DeepRank/PSSMGen) to see how to use it.
 
-### Example 1. Train your own model
+### Example 1. Use our trained model
 
-To train the model simply go to the `train` subdirectory and type:
-
-```bash
-# Without MPI
-iScore.train
-
-# With MPI
-mpiexec -n ${NPROC} iScore.train.mpi
-```
-
-This binary will generate a archive file called by default `training_set.tar.gz` that contains all the information needed to predict binary classes of a test set using the trained model.
-
-To use this model go into the `test` subdirectory and type:
-
-```bash
-# Without MPI
-iScore.predict --archive ../train/training_set.tar.gz
-
-# With MPI
-mpiexec -n ${NPROC} iScore.predict.mpi --archive ../train/training_set.tar.gz
-```
-
-This binary will output the binary class and decision value of the conformations in the test set in a text file `iScorePredict.txt`.
-
-      For the predicted iScore values, the lower value, the better quality of the conformation.
-
-
-### Example 2. Use our trained model
-
-You can also directly use our trained model to score your docking conformations. The model we provide is trained on docking benchmark version 5 ([BM5](https://zlab.umassmed.edu/benchmark/)) data, more details see [this paper](https://doi.org/10.1093/bioinformatics/btz496).
+You can directly use our trained model to score your docking conformations. The model we provide is trained on docking benchmark version 4 ([BM4](https://zlab.umassmed.edu/benchmark/)) data, in total 234 different structures were used (117 positive and 117 negative). More details see [this paper](https://doi.org/10.1093/bioinformatics/btz496).
 You can find the model in the package subfolder `model/training_set.tar.gz`.
 
 To use this model go into your `test` subdirectory and type:
@@ -95,3 +66,32 @@ mpiexec -n ${NPROC} iScore.predict.mpi
 ```
 
 The code will automatcially detect the path of the model.
+
+This binary will output the binary class and decision value of the conformations in the test set in a text file `iScorePredict.txt`.
+
+      For the predicted iScore values, the lower value, the better quality of the conformation.
+
+
+### Example 2. Train your own model
+
+To train the model simply go to your `train` subdirectory and type:
+
+```bash
+# Without MPI
+iScore.train
+
+# With MPI
+mpiexec -n ${NPROC} iScore.train.mpi
+```
+
+This binary will generate a archive file called by default `training_set.tar.gz` that contains all the information needed to predict binary classes of a test set using the trained model.
+
+To use this model go into your `test` subdirectory and type:
+
+```bash
+# Without MPI
+iScore.predict --archive ../train/training_set.tar.gz
+
+# With MPI
+mpiexec -n ${NPROC} iScore.predict.mpi --archive ../train/training_set.tar.gz
+```
