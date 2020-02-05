@@ -59,5 +59,3 @@ comm.Barrier()
 # train the model
 if rank == 0:
 	iscore_svm(train=True,package_model=True,package_name=args.archive)
-
-
