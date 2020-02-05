@@ -45,7 +45,8 @@ iScore offers simple solutions to classify protein-protein interfaces using a su
             |__ class.lst (optional)
       ```
       The `pdb` folder contains the PDB files of docking models, and `pssm` contains the PSSM files. The `class.lst` is a list of class ID and PDB file name for each docking model, like `0 7CEI_10w`.
-      Check the package subfolder `example/train` and `example/test` to learn to construct the file structure.
+
+            Check the package subfolders `example/train` and `example/test` to see how to prepare your files.
 
 - PDB files and PSSM files must have consistent sequences.
 [PSSMGen](https://github.com/DeepRank/PSSMGen) can be used to get consistent PSSM and PDB files. It is already installed along with iScore. Check [README](https://github.com/DeepRank/PSSMGen) to see how to use it.
@@ -55,7 +56,7 @@ iScore offers simple solutions to classify protein-protein interfaces using a su
 You can directly use our trained model to score your docking conformations. The model we provide is trained on docking benchmark version 4 ([BM4](https://zlab.umassmed.edu/benchmark/)) data, in total 234 different structures were used (117 positive and 117 negative). More details see [this paper](https://doi.org/10.1093/bioinformatics/btz496).
 You can find the model in the package subfolder `model/training_set.tar.gz`.
 
-To use this model go into your `test` subdirectory and type:
+To use this model go into your `test` subfolder and type:
 
 ```bash
 # Without MPI
@@ -74,7 +75,7 @@ This binary will output the binary class and decision value of the conformations
 
 ### Example 2. Train your own model
 
-To train the model simply go to your `train` subdirectory and type:
+To train the model simply go to your `train` subfolder and type:
 
 ```bash
 # Without MPI
@@ -86,7 +87,7 @@ mpiexec -n ${NPROC} iScore.train.mpi
 
 This binary will generate a archive file called by default `training_set.tar.gz` that contains all the information needed to predict binary classes of a test set using the trained model.
 
-To use this model go into your `test` subdirectory and type:
+To use this model go into your `test` subfolder and type:
 
 ```bash
 # Without MPI
