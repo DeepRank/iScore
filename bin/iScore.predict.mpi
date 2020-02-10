@@ -3,6 +3,7 @@
 import os
 import subprocess
 import argparse
+import iScore
 from iScore.graphrank.graph import iscore_graph_mpi
 from iScore.graphrank.kernel import iscore_kernel_mpi
 from iScore.graphrank.rank import iscore_svm
@@ -13,7 +14,7 @@ from iScore.function.score import iscore
 from mpi4py import MPI
 
 # set the default trained model
-pkg_path = os.path.dirname((os.path.dirname(__file__)))
+pkg_path = xos.path.dirname(iScore.__file__)
 trained_model = os.path.join(pkg_path, 'model', 'training_set.tar.gz')
 
 ##########################################################################

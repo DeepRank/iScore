@@ -2,6 +2,7 @@
 import os
 import subprocess
 import argparse
+import iScore
 from iScore.graphrank.graph import iscore_graph
 from iScore.graphrank.kernel import iscore_kernel
 from iScore.graphrank.rank import iscore_svm
@@ -10,7 +11,7 @@ from iScore.energetic.energy import iscore_energy
 from iScore.function.score import iscore
 
 # set the default trained model
-pkg_path = os.path.dirname((os.path.dirname(__file__)))
+pkg_path = os.path.dirname(iScore.__file__)
 trained_model = os.path.join(pkg_path, 'model', 'training_set.tar.gz')
 
 ##########################################################################
