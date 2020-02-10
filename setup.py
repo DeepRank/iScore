@@ -25,7 +25,6 @@ setup(
     url='https://github.com/DeepRank/iScore',
     packages=find_packages(),
     package_dir={'iScore': 'iScore'},
-    package_data={'iScore': ['model/training_set.tar.gz']},
     include_package_data=True,
     license="Apache Software License 2.0",
     zip_safe=False,
