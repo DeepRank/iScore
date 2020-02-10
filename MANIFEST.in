@@ -1,0 +1,3 @@
+include iScore/model/training_set.tar.gz
+include energetic/forcefield/*
+include graphrank/cuda/*
