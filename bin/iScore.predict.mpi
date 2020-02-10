@@ -14,7 +14,7 @@ from iScore.function.score import iscore
 from mpi4py import MPI
 
 # set the default trained model
-pkg_path = xos.path.dirname(iScore.__file__)
+pkg_path = os.path.dirname(iScore.__file__)
 trained_model = os.path.join(pkg_path, 'model', 'training_set.tar.gz')
 
 ##########################################################################
