@@ -91,10 +91,6 @@ class InternalEnergy(object):
         # entire residue containing at least 1 contact atom
         self.evaluate_charges(extend_contact_to_residue=True)
 
-        # close
-        self.sqldb.close()
-
-
     #####################################################################################
     #
     #   READ INPUT FILES

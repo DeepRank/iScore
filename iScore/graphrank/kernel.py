@@ -441,7 +441,7 @@ class Kernel(object):
         t0 = time()
         #n1,n2 = g1.num_nodes,g2.num_nodes
         self.px = [t[0]*t[1] if (float(t[0])>cutoff or float(t[1])>cutoff) else 0 for t in itertools.product(*[g1.nodes_info_data,g2.nodes_info_data])]
-        
+
         if self.debug:
             print('CPU - Px   : %f' %(time()-t0))
 
