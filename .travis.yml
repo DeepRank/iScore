@@ -21,7 +21,7 @@ before_install:
 
   # codacy-coverage
   - pip install -q --upgrade pip
-  
+
   # install mpi4py
   - sudo apt-get install libopenmpi-dev openmpi-bin
 
@@ -38,5 +38,4 @@ script:
   - cd ../
 
 after_script:
-- python-codacy-coverage -r coverage.xml
-- coveralls
+  - coveralls
