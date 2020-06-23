@@ -39,6 +39,15 @@ class Kernel(object):
         """Compute the kernels of graph pairs.
         Main class to compute the graph similarities.
 
+        Notes:
+
+        Reference:
+            Cunliang Geng, Yong Jung, Nicolas Renaud, Vasant Honavar,
+            Alexandre M J J Bonvin, Li C Xue, iScore: a novel graph
+            kernel-based function for scoring protein–protein docking models,
+            Bioinformatics, Volume 36, Issue 1, 1 January 2020, Pages 112–121,
+            https://doi.org/10.1093/bioinformatics/btz496
+
         Example:
 
         >>>from iScore.graph import Graph
@@ -303,7 +312,7 @@ class Kernel(object):
                     self.compute_px(G1,G2)
                     self.compute_W0(G1,G2)
 
-                # compute the graphs
+                # compute random walk graph kernels
                 n1 = os.path.splitext(name1)[0]
                 n2 = os.path.splitext(name2)[0]
                 K[(n1,n2)] = self.compute_K(lamb=lamb,walk=walk)
@@ -343,7 +352,11 @@ class Kernel(object):
     ##############################################################
 
     def compute_K(self,lamb=1,walk=4):
-        """Compute the kernel
+        """Compute random walk graph kernel
+
+        Notes:
+            Implementation of equation 4 in the reference
+            (https://doi.org/10.1093/bioinformatics/btz496)
 
         Args:
             lamb (int, optional): value of lambda
@@ -371,7 +384,11 @@ class Kernel(object):
     ##############################################################
 
     def compute_kron_mat(self,g1,g2):
-        """Kroenecker matrix calculation edges pssm similarity.
+        """Kroenecker matrix calculation
+
+        Notes:
+            Implementation of equation 5 (l=1) in the reference
+            (https://doi.org/10.1093/bioinformatics/btz496)
 
         Args:
             g1 (iScore.Graph): first graph
@@ -392,7 +409,12 @@ class Kernel(object):
         pssm2 = g2.edges_pssm
 
         # compute the weight
+        # Note that the weight here is calculating knode(vi, v'i)*knode(vj, v'j)
+        # of eq5, and kedge(eI, e'J) of eq5 is set to 1.
         if self.method == 'iter':
+            # the trick here is that _rbf_kernel is actually calculating
+            # knode(vi, v'i)*knode(vj, v'j) due to the shape of e.g. p[0]
+            # is (40,) but not (20,).
             weight  = np.array([ self._rbf_kernel(p[0],p[1]) for p in itertools.product(*[pssm1,pssm2]) ])
             ind     = np.array([ self._get_index(k[0],k[1],g2.num_nodes)  for k in itertools.product(*[index1,index2])])
 
@@ -433,6 +455,10 @@ class Kernel(object):
     def compute_px(self,g1,g2,cutoff=0.5):
         """Calculation of the Px vector from the nodes info.
 
+        Notes:
+            Implementation of equations 7 and 8 in the reference
+            (https://doi.org/10.1093/bioinformatics/btz496)
+
         Args:
             g1 (iScore.Graph): first graph
             g2 (iScore.Graph): second graph
@@ -447,6 +473,10 @@ class Kernel(object):
 
     def compute_W0(self,g1,g2,method='vect'):
         """Calculation of t W0 vector from the nodes pssm similarity
+
+        Notes:
+            Implementation of equation 5 (l=0) in the reference
+            (https://doi.org/10.1093/bioinformatics/btz496)
 
         Args:
             g1 (iScore.Graph): first graph
@@ -492,28 +522,35 @@ class Kernel(object):
 
     @staticmethod
     def _rbf_kernel(data1,data2,sigma=10):
-        """Kernel for the edges pssm similarity calculation.
+        """Kernel for the node similarity calculation using PSSM data.
         Used in the iter method.
 
+        Notes:
+            Implementation of equation 6 in the reference
+            (https://doi.org/10.1093/bioinformatics/btz496)
+
         Args:
-            data1 (TYPE): pssm data 1
-            data2 (TYPE): pssm dta 2
+            data1 (np.array): pssm data 1
+            data2 (np.array): pssm data 2
             sigma (int, optional): exponent of the exponetial
 
         Returns:
             float: value of the rbk kernel
         """
-
         delta = np.sum((data1-data2)**2)
         beta = 2*sigma**2
         return np.exp(-delta/beta)
 
     def _rbf_kernel_combvec(self,data1,data2,sigma=10):
-        """kernel for edge similarity computed with the combvec method
+        """kernel for node similarity computed with the combvec method
+
+        Notes:
+            Implementation of equation 6 in the reference
+            (https://doi.org/10.1093/bioinformatics/btz496)
 
         Args:
-            data1 (TYPE): pssm data 1
-            data2 (TYPE): pssm dta 2
+            data1 (np.array): pssm data 1
+            data2 (np.array): pssm data 2
             sigma (int, optional): exponent of the exponetial
 
         Returns:
@@ -527,11 +564,15 @@ class Kernel(object):
 
     @staticmethod
     def _rbf_kernel_vectorized(data1,data2,sigma=10):
-        """kernel for edge similarity computed with the vectorized method
+        """kernel for node similarity computed with the vectorized method
+
+        Notes:
+            Implementation of equation 6 in the reference
+            (https://doi.org/10.1093/bioinformatics/btz496)
 
         Args:
-            data1 (TYPE): pssm data 1
-            data2 (TYPE): pssm dta 2
+            data1 (np.array): pssm data 1
+            data2 (np.array): pssm data 2
             sigma (int, optional): exponent of the exponetial
 
         Returns:
