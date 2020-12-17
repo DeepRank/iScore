@@ -5,7 +5,7 @@
 [![PyPI](https://img.shields.io/pypi/v/iscore)](https://pypi.org/project/iscore/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2630566.svg)](https://doi.org/10.5281/zenodo.2630566)
 [![RSD](https://img.shields.io/badge/RSD-iScore-red)](https://research-software.nl/software/iscore)
-![Build](https://github.com/DeepRank/iScore/workflows/Build/badge.svg)
+![Build_Test](https://github.com/DeepRank/iScore/workflows/Build_Test/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/DeepRank/iScore/badge.svg?branch=master)](https://coveralls.io/github/DeepRank/iScore?branch=master)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/3e277331d8fe4de0a22b630bdce6a121)](https://www.codacy.com/gh/DeepRank/iScore/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DeepRank/iScore&amp;utm_campaign=Badge_Grade)
 [![Documentation Status](https://readthedocs.org/projects/iscoredoc/badge/?version=latest)](http://iscoredoc.readthedocs.io/?badge=latest)
