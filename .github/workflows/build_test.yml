@@ -1,15 +1,43 @@
-name: Build
+name: Build_Test
 
 on: [push, pull_request]
 
 jobs:
-  build_test:
+  smoke_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Install openmpi
+      run: |
+        sudo apt-get install libopenmpi-dev openmpi-bin
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .[test]
+    - name: Test with pytest
+      run: |
+        cd test/
+        pytest --cov=iScore --cov-report xml:coverage.xml
+        mv coverage.xml .coverage ../test_mpi
+        cd ../test_mpi
+        mpiexec -n 1 pytest --cov=iScore --cov-report xml:coverage.xml --cov-append
+        mv coverage.xml .coverage ../
+        cd ../
+    - name: Coveralls
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        coveralls
 
+  basic_test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9]
-
+        python-version: [3.8, 3.9]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
