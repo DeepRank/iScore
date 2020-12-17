@@ -34,6 +34,7 @@ jobs:
         coveralls
 
   basic_test:
+    needs: smoke_test
     runs-on: ubuntu-latest
     strategy:
       matrix:
