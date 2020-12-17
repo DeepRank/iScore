@@ -7,7 +7,7 @@
 [![RSD](https://img.shields.io/badge/RSD-iScore-red)](https://research-software.nl/software/iscore)
 ![Build](https://github.com/DeepRank/iScore/workflows/Build/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/DeepRank/iScore/badge.svg?branch=master)](https://coveralls.io/github/DeepRank/iScore?branch=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9491c221796e49c0a120ada9aed5fe42)](https://www.codacy.com/app/NicoRenaud/iScore?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DeepRank/iScore&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/3e277331d8fe4de0a22b630bdce6a121)](https://www.codacy.com/gh/DeepRank/iScore/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DeepRank/iScore&amp;utm_campaign=Badge_Grade)
 [![Documentation Status](https://readthedocs.org/projects/iscoredoc/badge/?version=latest)](http://iscoredoc.readthedocs.io/?badge=latest)
 
 ![alt text](./image/workflow.png)
