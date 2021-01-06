@@ -21,15 +21,15 @@ Minimal information to install the module
 Possible problems:
 - If `pip install iScore` gives problems on installing `mpi4py`, try to first install `mpi4py` using `conda install mpi4py` and then `pip install iScore`.
 
-## 2. Documentaion
+## 2. Documentation
 
-The documentaion of the pacakge can be found at:
+The documentation of the package can be found at:
 - https://iscoredoc.readthedocs.io
 
 
 ## 3. Quick Examples
 
-iScore offers simple solutions to classify protein-protein interfaces using a support vector machine approach on graph kernels. The simplest way to use iScore is through dedicated binaries that hide the complexity of the approach and allows access to the code with simple command line interfaces. The two binaries are `iscore.train` and `iscore.predict` (`iscore.train.mpi` and `iscore.predict.mpi` for parallel running) that respectively train a model using a trainging set and use this model to rank the docking models of a protein-protein complex.
+iScore offers simple solutions to classify protein-protein interfaces using a support vector machine approach on graph kernels. The simplest way to use iScore is through dedicated binaries that hide the complexity of the approach and allows access to the code with simple command line interfaces. The two binaries are `iscore.train` and `iscore.predict` (`iscore.train.mpi` and `iscore.predict.mpi` for parallel running) that respectively train a model using a training set and use this model to rank the docking models of a protein-protein complex.
 
 ### Requirements for preparing data:
 
@@ -67,7 +67,7 @@ iScore.predict
 mpiexec -n ${NPROC} iScore.predict.mpi
 ```
 
-The code will automatcially detect the path of the model.
+The code will automatically detect the path of the model.
 
 This binary will output the binary class and decision value of the conformations in the test set in a text file `iScorePredict.txt`.
 
@@ -97,3 +97,10 @@ iScore.predict --archive ../train/training_set.tar.gz
 # With MPI
 mpiexec -n ${NPROC} iScore.predict.mpi --archive ../train/training_set.tar.gz
 ```
+
+## 4. Citation
+
+If you use iScore software, please cite the following articles:
+
+1. *Cunliang Geng, Yong Jung, Nicolas Renaud, Vasant Honavar, Alexandre M J J Bonvin, and Li C Xue.* “**iScore: A Novel Graph Kernel-Based Function for Scoring Protein-Protein Docking Models.**” Bioinformatics, 2019, https://doi.org/10.1093/bioinformatics/btz496.
+2. *Nicolas Renaud, Yong Jung, Vasant Honavar, Cunliang Geng, Alexandre M. J. J. Bonvin, and Li C. Xue.* “**iScore: An MPI Supported Software for Ranking Protein–Protein Docking Models Based on a Random Walk Graph Kernel and Support Vector Machines.**” SoftwareX, 2020, https://doi.org/10.1016/j.softx.2020.100462.
