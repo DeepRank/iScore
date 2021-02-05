@@ -24,7 +24,7 @@ parser.add_argument('--graph',default='./graph/',type=str,help='Graph pickle fil
 parser.add_argument('--arc',default='training_set.tar.gz', type = str, help='name of the achive')
 
 # maximum walk length
-parser.add_argument('--walk',default=4, type=int, help='maximum walk length')
+parser.add_argument('--walk',default=3, type=int, help='maximum walk length')
 
 # get the args
 args = parser.parse_args()
