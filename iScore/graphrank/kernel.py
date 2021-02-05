@@ -58,7 +58,7 @@ class Kernel(object):
         >>># get the path of the check file
         >>>checkfile = ker.get_check_file()
         >>># run the calculations
-        >>>ker.run(lamb=1.0,walk=4,check=checkfile)
+        >>>ker.run(lamb=1.0,walk=3,check=checkfile)
 
 
         Args:
@@ -351,7 +351,7 @@ class Kernel(object):
     #
     ##############################################################
 
-    def compute_K(self,lamb=1,walk=4):
+    def compute_K(self,lamb=1,walk=3):
         """Compute random walk graph kernel
 
         Notes:
@@ -966,7 +966,7 @@ def iscore_kernel(testID=None,trainID=None,
                   test_graph='./graph', train_graph='./graph',\
                   train_archive=None,
                   check=None, outfile='kernel.pkl',test=False,
-                  lamb=1, walk=4, method='vect',
+                  lamb=1, walk=3, method='vect',
                   tune_kernel=False,func='all',cuda=False, gpu_block=[8,8,1]):
 
     # init and load the data
@@ -997,7 +997,7 @@ def iscore_kernel_mpi(testID=None,trainID=None,
                       test_graph='./graph', train_graph='./graph',
                       train_archive=None,
                       check=None, outfile='kernel.pkl',test=False,
-                      lamb=1, walk=4, method='vect',rank=0,size=1):
+                      lamb=1, walk=3, method='vect',rank=0,size=1):
 
     # init and load the data
     ker = Kernel(testIDs=testID,test_graph = test_graph,

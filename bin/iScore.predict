@@ -25,6 +25,12 @@ parser = argparse.ArgumentParser(description=' iScore - Predict the class of new
 # where the kernels are stored
 parser.add_argument('-gt', '--ground_truth',default=None,type=str,help='File containing the ground truth')
 
+# walk length for kernel
+parser.add_argument('--walk',default=3, type=int, help='walk length for creating kernel')
+
+# max walk length to use in svm
+parser.add_argument('--maxlen', type=int, default=None, help='max walk length of the kernel. Default max len possible with the kernel file')
+
 # where the kernels are stored
 parser.add_argument('--kernel',default='./kernel/',type=str,help='Kernel pickle file to use')
 
@@ -54,12 +60,12 @@ else:
 if not os.path.isdir(args.kernel):
     os.mkdir(args.kernel)
     kfile = os.path.join(args.kernel,'kernel.pckl')
-    iscore_kernel(test_graph=args.graph,train_archive=args.archive,outfile=kfile)
+    iscore_kernel(test_graph=args.graph,walk=args.walk,train_archive=args.archive,outfile=kfile)
 else:
     print('Reusing kernels in %s' %(args.kernel))
 
 # grahrank score
-iscore_svm(load_model=None,package_name=args.archive,testID=args.ground_truth)
+iscore_svm(load_model=None,package_name=args.archive,maxlen=args.maxlen,testID=args.ground_truth)
 
 # add energy terms
 iscore_energy(method=args.energy)
