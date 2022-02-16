@@ -23,8 +23,11 @@ parser.add_argument('--graph',default='./graph/',type=str,help='Graph pickle fil
 
 parser.add_argument('--archive',default='training_set.tar.gz', type = str, help='name of the achive')
 
-# maximum walk length
-parser.add_argument('--walk',default=4, type=int, help='maximum walk length')
+# walk length for kernel
+parser.add_argument('--walk',default=3, type=int, help='walk length for creating kernel')
+
+# max walk length to use in svm
+parser.add_argument('--maxlen', type=int, default=None, help='max walk length of the kernel. Default max len possible with the kernel file')
 
 # get the args
 args = parser.parse_args()
@@ -58,4 +61,4 @@ comm.Barrier()
 
 # train the model
 if rank == 0:
-	iscore_svm(train=True,package_model=True,package_name=args.archive)
+	iscore_svm(train=True, package_model=True, maxlen=args.maxlen, package_name=args.archive)
