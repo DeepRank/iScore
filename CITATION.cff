@@ -17,7 +17,7 @@ authors:
     given-names: Li
 
 
-cff-version: "0.2.0"
+cff-version: 1.2.0
 doi: "10.5281/zenodo.2630566"
 keywords:
   - scoring
